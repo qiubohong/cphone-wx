@@ -1,0 +1,35 @@
+.price{
+	color:#ff7788;
+}
+
+
+.order-box{
+  background:#fff;
+  border-bottom:1px solid #ececec;
+  margin-bottom: 4px;
+}
+.order-title{
+  padding:.2rem;
+  font-size: .3rem;
+  border-bottom: 1px solid #ececec;
+}
+.order-icon{
+  width:1rem;
+  height:1rem;
+  background:#ccc;
+  line-height:1rem;
+  text-align:center;
+  border-radius:50%;
+  margin:.2rem;
+}
+.order-footer{
+  text-align: right;
+  padding: .2rem;
+  border-top: 1px solid #ececec;
+}
+
+.yd-btn-block{
+  font-size: .3rem;
+  height:.68rem;
+  margin-top: .2rem;
+}
