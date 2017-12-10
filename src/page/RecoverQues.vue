@@ -6,16 +6,17 @@
         </router-link>
     </yd-navbar>
     <div class="quesBox">
-      <yd-cell-group :id="index" :title="ques.title" v-for="(ques,index) in quesList" :key="index">
-          <yd-cell-item v-if='ques.type === "danxuan"' v-for="option in ques.options">
+      <yd-cell-group :id="index" :title="ques.problemName" v-for="(ques,index) in problems" :key="index">
+          <yd-cell-item v-if='ques.problemType === 0' v-for="option in ques.selects">
             <yd-radio-group slot="left" v-model="ques.checked">
-                <yd-radio :val="option.title" style='width:12rem'></yd-radio>
+                <yd-radio :val="option.id" style='width:12rem'>{{option.problemItem}}</yd-radio>
             </yd-radio-group>
           </yd-cell-item>
 
-          <yd-cell-item v-if='ques.type === "duoxuan"' v-for="option in ques.options">
+          <yd-cell-item v-if='ques.problemType === 1' v-for="option in ques.selects">
+            <span slot="right">{{ques.checked}}</span>
             <yd-checkbox-group slot="left" v-model="ques.checked">
-              <yd-checkbox :val="option.title" style='width:12rem'></yd-checkbox>
+              <yd-checkbox :val="option.id" shape="circle" style="display:block;width:8rem;padding:.2rem 0;border-bottom:1px solid #ececec">{{option.problemItem}}</yd-checkbox>
             </yd-checkbox-group>
           </yd-cell-item>
       </yd-cell-group>
@@ -32,45 +33,98 @@ export default {
   name: 'recoverIndex',
   created(){
     if(!this.$store.recoverSelect){
-      this.$store.commit('FETCH_RECYCLE',{
-        id:this.$route.params.id
+      this.$store.dispatch('FETCH_SINGLE_RECYCLE').then(()=>{
+      });
+      this.$store.dispatch('FETCH_RECYCLE_PROBLEM',{
+        phoneId: this.$route.params.id
       });
     }
   },
   computed:{
     title(){
-      return "手机回收-"+this.$store.state.recoverSelect.name;
+      if(this.$store.state.recoverSelect){
+        return "手机回收-"+this.$store.state.recoverSelect.name;
+      }
+      return "手机回收";
+    },
+    problems(){
+      let {recycleProblems} = this.$store.state;
+      return recycleProblems;
+    }
+  },
+  watch:{
+    loading: (val)=>{
+      console.log(val)
+      if(val){
+        this.$dialog.loading.open();
+      }else{
+        this.$dialog.loading.close();
+      }
     }
   },
   data () {
     return {
-      radio1:"",
-      quesList: [
-        {title: "选项标题1", options: [{title:"选项标题1"},{title:"选项标题2"},{title:"选项标题3"}], type:'danxuan',checked:""},
-        {title: "选项标题2", options: [{title:"选项标题1"},{title:"选项标题2"},{title:"选项标题3"}], type:'danxuan',checked:""},
-        {title: "选项标题3", options: [{title:"选项标题1"},{title:"选项标题2"},{title:"选项标题3"}], type:'danxuan',checked:""},
-        {title: "选项标题4", options: [{title:"选项标题1"},{title:"选项标题2"},{title:"选项标题3"}], type:'duoxuan',checked:[]}
-      ],
+      loading: this.$store.state.pageLoading,
+      phoneId: this.$route.params.id,
+      checked:[],
     }
   },
   methods:{
     handleClick: function(){
-      for(let val of this.quesList){
-        if(val.type === 'duoxuan'){
-          continue;
-        }
-        if(val.checked === ""){
-          this.$dialog.toast({
-            mes: '请选完“'+val.title+'”选项！',
-            icon: 'error',
-            callback: () => {
-                            
-            }
-          });
+      let flag = false;
+      let answers = [];
+      for(let val of this.problems){
+        if(val.problemType === 1){
+          if(val.checked.length === 0){
+            this.$dialog.toast({
+              mes: '请选完“'+val.problemName+'”选项！',
+              icon: 'error',
+              callback: () => {}
+            });
+
           break;
+          }else{
+            answers.push({
+              problemId:val.id,
+              selects:[...val.checked]
+            })
+          }
+        }else {
+          if(val.checked === ""){
+            flag = true;
+            this.$dialog.toast({
+              mes: '请选完“'+val.problemName+'”选项！',
+              icon: 'error',
+              callback: () => {}
+            });
+            break;
+          }else{
+            answers.push({
+              problemId:val.id,
+              selects:[val.checked]
+            })
+
+          }
+          
         }
       }
-      this.$router.push("/recoverResult");
+      if(flag){
+        return;
+      }
+      let submitData = {
+        "phoneId": this.phoneId,
+        "answers": [
+          ...answers
+        ]
+      }
+      console.log(JSON.stringify(submitData))
+      this.$store.dispatch("FETCH_RECYCLE_OFFER",{
+        submitData,
+        callback(res){
+          console.log(res)
+        }
+      })
+      //this.$router.push("/recoverResult");
     }
   }
 

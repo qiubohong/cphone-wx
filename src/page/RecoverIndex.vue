@@ -70,7 +70,8 @@ export default {
   },
   methods:{
     goToQues: function(item){
-      this.$store.commit('SET_RECOVER_SELECT',{data:item})
+      localStorage.setItem(this.$store.state.key.selectRecycle,JSON.stringify(item));
+      this.$store.dispatch('FETCH_SINGLE_RECYCLE');
       this.$router.push({ path: '/recoverQues/'+item.id })
     }
   }

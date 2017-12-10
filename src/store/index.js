@@ -13,7 +13,13 @@ export default new Vuex.Store({
     brands: [],
   	indexHot:[],
     recycles: [],
-    recoverSelect:{}
+    recycleSelect:{},
+    recycleProblems:[],
+    recoverSelect:{},
+    key:{
+      selectRecycle:"RECYCLE"
+    },
+    pageLoading:false,
   },
   actions:{
     FETCH_BRANDS:({ commit, dispatch, state })=>{
@@ -37,11 +43,24 @@ export default new Vuex.Store({
           return Promise.resolve(data);
         })
     },
-    FETCH_SINGLE_RECYCLE:({ commit, dispatch, state },{brandId})=>{
-      fetch.getRecyclePhones(brandId)
+    FETCH_SINGLE_RECYCLE:({ commit, dispatch, state })=>{
+      let data = JSON.parse(localStorage.getItem(state.key["selectRecycle"]));
+      commit('SET_RECYCLE_SELECT', { data })
+    },
+    FETCH_RECYCLE_PROBLEM:({ commit, dispatch, state }, {phoneId})=>{
+      state.pageLoading = true;
+      fetch.getRecycleProblems(phoneId)
         .then(data => {
-          commit('SET_RECYCLE', { data })
-          return Promise.resolve(data);
+          state.pageLoading = false;
+          commit('SET_RECYCLE_PROBLEMS', { data })
+        })
+    },
+    FETCH_RECYCLE_OFFER:({ commit, dispatch, state }, {submitData, callback})=>{
+      state.pageLoading = true;
+      fetch.recycleOffer(submitData)
+        .then(data => {
+          state.pageLoading = false;
+          callback(data);
         })
     },
   },
@@ -69,6 +88,26 @@ export default new Vuex.Store({
         !flag && recycles.push(item2);
       })
       state.recycles = recycles;
+    },
+    SET_RECYCLE_SELECT:(state, {data}) =>{
+      state.recoverSelect = data;
+    },
+    SET_RECYCLE_PROBLEMS:(state, {data}) =>{
+      if(data.errorCode == SUCCESS){
+        let recycleProblems = data.data
+        if(recycleProblems){
+          recycleProblems.forEach((item)=>{
+            if(item.problemType == 0){
+              item.checked = "";
+            }else{
+              item.checked = [];
+            }
+          });
+        }
+        state.recycleProblems = recycleProblems;
+      }else{
+        state.recycleProblems = [];
+      }
     },
     SET_RECOVER_SELECT:(state,{data}) => {
       state.recoverSelect = data;
