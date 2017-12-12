@@ -40,13 +40,6 @@ export default {
   methods: {
     goToForm: function() {
       this.$router.push('/recycleForm');
-    },
-    getGeolocation: function() {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        let longitude = position.coords.longitude;
-        let latitude = position.coords.latitude;
-        console.log('longitude:' + longitude + ',latitude:' + latitude)
-      });
     }
   }
 

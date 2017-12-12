@@ -19,9 +19,24 @@ export default new Vuex.Store({
 
     repairs: [], //维修
     
+    position:{
+      longitude: 0,
+      latitude: 0,
+    },
+
+    customer:{},
+    wxOpenid:"123232323",
+    
     key:{
       recycleSelect:"RECYCLE_SELECT",
       recycleSubmit:"RECYCLE_SUBMIT",
+      position:{
+        longitude: "LONGITUDE",
+        latitude: "LATITUDE",
+      },
+    },
+    code:{
+      success:SUCCESS
     },
     pageLoading:false,
   },
@@ -66,6 +81,16 @@ export default new Vuex.Store({
           callback(data);
         })
     },
+    FETCH_RECYCLE_ORDER:({ commit, dispatch, state }, {formData})=>{
+      return new Promise((resolve,reject)=>{
+        fetch.recycleOrder(formData)
+          .then(data => {
+            resolve(data);
+          }).catch((e)=>{
+            reject(e);
+          });
+      });
+    },
     FETCH_RECCYLE_RESULT:({ commit, dispatch, state })=>{
       let data = JSON.parse(localStorage.getItem(state.key["recycleSubmit"]));
       commit('SET_RECYCLE_RESULT', { data })
@@ -77,6 +102,19 @@ export default new Vuex.Store({
           commit('SET_REPAIRS', { data });
           state.pageLoading = false;
         })
+    }, 
+    FETCH_POSITION:({ commit, dispatch, state })=>{
+      let longitude = localStorage.getItem(state.key.position.longitude);
+      let latitude = localStorage.getItem(state.key.position.latitude);
+      commit('SET_POSITION',{longitude,latitude});
+    },
+    FETECH_STORE: ({ commit, dispatch, state }, {latitude, longitude })=>{
+      return new Promise((resolve,reject)=>{
+        fetch.getStore(latitude,longitude)
+        .then(data => {
+          resolve(data);
+        }).catch(reject);
+      })
     }, 
   },
   mutations:{
@@ -134,6 +172,10 @@ export default new Vuex.Store({
       }else{
         state.repairs = [];
       }
+    },
+    SET_POSITION: (state, {longitude,latitude})=>{
+      state.position.longitude = longitude;
+      state.position.latitude = latitude;
     },
   }
 })

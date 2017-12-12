@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Index from '@/page/Index'
 
 import Login from '@/page/Login'
+import Register from '@/page/Register'
 
 import RecycleIndex from '@/page/RecycleIndex'
 import RecycleQues from '@/page/RecycleQues'
@@ -29,6 +30,11 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Register
     },
     {
       path: '/recycleIndex',

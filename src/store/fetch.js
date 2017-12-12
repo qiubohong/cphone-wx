@@ -66,6 +66,15 @@ export function recycleOffer(data) {
   return fetch({ url: BASE + `recycle/offer`, method: "post", data })
 }
 
+export function recycleOrder(data) {
+  return fetch({ url: BASE + `recycle/order/commitOrder`, method: "post", data })
+}
+
 export function getMaintainPhones() {
   return fetch({ url: BASE + `maintain/getMaintainPhones`})
+}
+
+
+export function getStore(lat,lng) {
+  return fetch({ url: BASE + `/storeinfo/nearlist/${lat}/${lng}`})
 }

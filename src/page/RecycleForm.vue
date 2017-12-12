@@ -40,7 +40,7 @@
         </yd-cell-item>
       </template>
       <template v-if='formData.serviceType == 2'>
-        <yd-cell-item arrow @click.native="show2 = true">
+        <yd-cell-item arrow @click.native="getStore">
           <span slot="left">{{checkedAddress == '' ? '请选择门店' : checkedAddress}}</span>
         </yd-cell-item>
         <yd-cell-item>
@@ -49,6 +49,10 @@
         </yd-cell-item>
       </template>
       <template v-if='formData.serviceType == 3'>
+        <yd-cell-item>
+          <span slot="left">锁屏密码：</span>
+          <input slot="right" type="text" v-model="formData.iphonePasswd" placeholder="请输入锁屏密码">
+        </yd-cell-item>
         <yd-cell-item>
           <span slot="left">快递公司：</span>
           <input slot="right" type="text" placeholder="请输入快递公司">
@@ -72,7 +76,7 @@
           <yd-button type="primary" @click.native="storeShow = false">确定</yd-button>
         </yd-flexbox-item>
         <yd-flexbox-item style='text-align:right'>
-          <yd-button type="danger" @click.native="storeShow = false">取消</yd-button>
+          <yd-button type="danger" @click.native="cancelStore">取消</yd-button>
         </yd-flexbox-item>
       </yd-flexbox>
       <yd-cell-group>
@@ -141,16 +145,15 @@ export default {
     if (!this.$store.state.recycleSelect.name) {
       this.$store.dispatch('FETCH_SINGLE_RECYCLE');
       this.$store.dispatch("FETCH_RECCYLE_RESULT");
+      this.$store.dispatch("FETCH_POSITION");
     }
-
   },
   data() {
     let now = new Date();
-    now.setDate(now.getDate()+1);
-    let startDate = formateDate(now,"yyyy-MM-dd hh:mm");
-    now.setDate(now.getDate()+7);
-    let endDate = formateDate(now,"yyyy-MM-dd hh:mm");
-    console.log(startDate);
+    now.setDate(now.getDate() + 1);
+    let startDate = formateDate(now, "yyyy-MM-dd hh:mm");
+    now.setDate(now.getDate() + 7);
+    let endDate = formateDate(now, "yyyy-MM-dd hh:mm");
     return {
       startDate: startDate,
       endDate: endDate,
@@ -166,7 +169,7 @@ export default {
         "serviceType": 1, //1：上门；2：门店；3：邮寄
         "address": "",
         "period": "",
-        "storeId": 0,
+        "storeId": 1,
         "expressCompany": "",
         "expressNumber": "",
         "iphonePasswd": "",
@@ -179,7 +182,7 @@ export default {
             ]
           }]
         },
-        "positon": ""
+        "positon": "0,0" //坐标：lat,lng
       },
       address: "",
       cityModel: '',
@@ -193,22 +196,98 @@ export default {
     },
     recycleSelect() {
       this.formData.recyclePhoneId = this.$store.state.recycleSelect.id;
+      this.formData.recyclePhoneProblems = this.$store.state.recycleResult;
       return this.$store.state.recycleSelect;
     },
     offer() {
       return this.$store.state.recycleResult;
+    },
+    position() {
+      return this.$store.state.position;
     }
   },
   methods: {
-    submitForm: function() {
-      this.formData.address = this.cityModel + this.address;
-      //this.$router.push("/formSuccess/recoverIndex");
+    toastError(mes) {
+      this.$dialog.toast({
+        mes,
+        timeout: 1500,
+        icon: 'error',
+      });
     },
-    backQues: function() {
-      this.$router.push("/recycleQues/"+this.$store.state.recycleSelect.id);
+    checkForm() {
+      if (this.formData.serviceType == 1) {
+        if (this.formData.address === "") {
+          this.toastError("请选择地址！");
+          return false;
+        }
+      } else if (this.formData.serviceType == 2) {
+        if (this.formData.storeId === "") {
+          this.toastError("请选择门店");
+          return false;
+        }
+      } else if (this.formData.serviceType == 3) {
+        if (this.formData.iphonePasswd === "") {
+          this.toastError("请输入解锁密码");
+          return false;
+        }
+        if (this.formData.expressCompany === "") {
+          this.toastError("请输入快递公司名称");
+          return false;
+        }
+        if (this.formData.expressNumber === "") {
+          this.toastError("请输入快递单号");
+          return false;
+        }
+      }
+
+      return true;
+    },
+    submitForm() {
+      this.formData.address = this.cityModel + this.address;
+      this.formData.positon = this.position.latitude + "," + this.position.longitude;
+      let check = this.checkForm();
+      if (!check) {
+        return;
+      }
+      this.$dialog.loading.open("提交中...");
+      this.$store.dispatch('FETCH_RECYCLE_ORDER',{formData:this.formData})
+        .then((data) => {
+          this.$dialog.loading.close();
+          if (this.$store.state.code["success"] == data.errorCode) {
+            this.$router.push("/formSuccess/recycleIndex");
+          } else {
+            this.toastError(data.errorInfo);
+          }
+        }).catch((e) => {
+          console.log(e)
+          this.toastError('网络错误请稍后重试！');
+        });
+    },
+    backQues() {
+      this.$router.push("/recycleQues/" + this.$store.state.recycleSelect.id);
     },
     cityResult(ret) {
       this.cityModel = ret.itemName1 + ' ' + ret.itemName2 + ' ' + ret.itemName3;
+    },
+    getStore() {
+      this.$dialog.loading.open();
+      let longitude = (~~this.position.longitude).toFixed(6);
+      let latitude = (~~this.position.latitude).toFixed(6);
+      this.$store.dispatch('FETECH_STORE', { latitude, longitude }).then(() => {
+        this.$dialog.loading.close();
+        this.storeShow = true;
+      }).catch(() => {
+        this.$dialog.loading.close();
+        this.$dialog.toast({
+          mes: '网络错误请稍后重试！',
+          timeout: 1500,
+          icon: 'error',
+        });
+      })
+    },
+    cancelStore() {
+      this.storeShow = false;
+      this.checkedAddress = "";
     }
   }
 

@@ -10,7 +10,17 @@
 export default {
   name: 'app',
   created(){
-    this.$store.dispatch('FETCH_BRANDS')
+    this.$store.dispatch('FETCH_BRANDS');
+    navigator.geolocation.getCurrentPosition((position) =>{
+        let longitude = position.coords.longitude;
+        let latitude = position.coords.latitude;
+        localStorage.setItem(this.$store.state.key.position.longitude, longitude);
+        localStorage.setItem(this.$store.state.key.position.latitude, latitude);
+        this.$store.dispatch('FETCH_POSITION');
+    });
+    if(!this.$store.state.customer.id){
+      this.$router.push({ path: '/register' })
+    }
   }
 }
 </script>
