@@ -19,13 +19,15 @@ export default new Vuex.Store({
 
     repairs: [], //维修
     
+    stores:[],
+
     position:{
-      longitude: 0,
-      latitude: 0,
+      longitude: 113,
+      latitude: 22,
     },
 
     customer:{},
-    wxOpenid:"123232323",
+    wxOpenid:"123123123",
     
     key:{
       recycleSelect:"RECYCLE_SELECT",
@@ -34,6 +36,7 @@ export default new Vuex.Store({
         longitude: "LONGITUDE",
         latitude: "LATITUDE",
       },
+      customer: "CUSTOMER",
     },
     code:{
       success:SUCCESS
@@ -41,6 +44,30 @@ export default new Vuex.Store({
     pageLoading:false,
   },
   actions:{
+    FETCH_SIGN:({ commit, dispatch, state },{data})=>{
+      return new Promise((resolve,reject)=>{
+        fetch.sign(data)
+        .then(data => {
+          resolve(data)
+        }).catch(reject);
+      })
+    },
+    FETCH_LOGIN:({ commit, dispatch, state },{data})=>{
+      return new Promise((resolve,reject)=>{
+        fetch.login(data)
+        .then(data => {
+          resolve(data)
+        }).catch(reject);
+      })
+    },
+    FETCH_LOGIN_CACHE:({ commit, dispatch, state })=>{
+      let data;
+      try{
+        data = JSON.parse(localStorage.getItem(state.key["customer"]));
+      }catch(e){ }
+      data = data || {};
+      commit('SET_CUSTOMER', {data})
+    },
     FETCH_BRANDS:({ commit, dispatch, state })=>{
       fetch.getBrands()
         .then(data => {
@@ -48,18 +75,21 @@ export default new Vuex.Store({
         })
     },
   	FETCH_INDEX_HOT:({ commit, dispatch, state })=>{
-  		fetch.getIndexHot()
-  			.then(data => {
+  		return new Promise((resolve,reject)=>{
+  			fetch.getIndexHot().then(data => {
+          resolve(data);
           commit('SET_INDEX_HOT', { data })
-        })
+        }).catch(reject);
+      });
   	},
     FETCH_RECYCLES:({ commit, dispatch, state },{brandId})=>{
-      state.pageLoading = true;
+      return new Promise((resolve,reject)=>{
       fetch.getRecyclePhones(brandId)
         .then(data => {
+          resolve(data);
           commit('SET_RECYCLE', { data });
-          state.pageLoading = false;
-        })
+        }).catch(reject);
+      });
     },
     FETCH_SINGLE_RECYCLE:({ commit, dispatch, state })=>{
       let data = JSON.parse(localStorage.getItem(state.key["selectRecycle"]));
@@ -92,7 +122,10 @@ export default new Vuex.Store({
       });
     },
     FETCH_RECCYLE_RESULT:({ commit, dispatch, state })=>{
-      let data = JSON.parse(localStorage.getItem(state.key["recycleSubmit"]));
+      let data = {};
+      try{
+        data = JSON.parse(localStorage.getItem(state.key["recycleSubmit"]));
+      }catch(e){ }
       commit('SET_RECYCLE_RESULT', { data })
     },
     FETCH_REPAIRS: ({ commit, dispatch, state })=>{
@@ -118,6 +151,9 @@ export default new Vuex.Store({
     }, 
   },
   mutations:{
+    SET_CUSTOMER: (state,{data}) =>{
+      state.customer = data
+    },
     SET_BRANDS: (state,{data}) =>{
       if(data.errorCode == SUCCESS){
         state.brands = data.data
@@ -174,8 +210,15 @@ export default new Vuex.Store({
       }
     },
     SET_POSITION: (state, {longitude,latitude})=>{
+      if(!longitude || !latitude){
+        longitude = 113;
+        latitude = 22;
+      }
       state.position.longitude = longitude;
       state.position.latitude = latitude;
+    },
+    SET_STORE: (state, {data})=>{
+      state.stores = data;
     },
   }
 })

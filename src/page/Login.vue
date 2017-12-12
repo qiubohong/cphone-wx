@@ -7,25 +7,16 @@
     <yd-cell-group style='margin:0 .2rem'>
       <yd-cell-item>
         <yd-icon slot="icon" name="phone3" size=".45rem"></yd-icon>
-        <input  slot="right" type="number" placeholder="请输入手机号">
+        <input v-model="number" slot="right" type="number" placeholder="请输入手机号">
         </span>
       </yd-cell-item>
-       <yd-cell-item>
-            <yd-icon slot="icon" name="shield-outline" size=".45rem"></yd-icon>
-            <input type="text" slot="right" placeholder="请输入验证码">
-
-            <!-- ↓↓关键代码是这里↓↓ -->
-            <yd-sendcode slot="right" 
-                         v-model="start1" 
-                         @click.native="sendCode1" 
-                         type="warning"
-            ></yd-sendcode>
-            <!-- ↑↑关键代码是这里↑↑ -->
-
-        </yd-cell-item>
+      <yd-cell-item>
+        <yd-icon slot="icon" name="warn-outline"size=".45rem"></yd-icon>
+        <input v-model="password" slot="right" type="password" placeholder="请输入密码">
+       </yd-cell-item>
     </yd-cell-group>
     <div style='margin:.2rem'>
-    <yd-button size="large" type="primary">登录</yd-button>
+    <yd-button size="large" type="primary" @click.native="login">登录</yd-button>
     </div>
   </div>
 </template>
@@ -35,31 +26,75 @@
 export default {
   name: 'login',
   computed: {
-    
+    wxOpenid(){
+      return this.$store.state.wxOpenid;
+    }
   },
   data () {
     return {
-      start1: false
+      number:"",
+      password:""
     }
   },
   created () {
   },
   methods:{
-    sendCode1() {
-                this.$dialog.loading.open('发送中...');
-                setTimeout(() => {
-
-                    this.start1 = true;
-                    this.$dialog.loading.close();
-
-                    this.$dialog.toast({
-                        mes: '已发送',
-                        icon: 'success',
-                        timeout: 1500
-                    });
-
-                }, 1000);
-            }
+    toastError(mes){
+            this.$dialog.toast({
+            mes:mes,
+            timeout:1500,
+            icon:"error",
+          })
+    },
+    check(){
+      if(this.number == ""){
+        this.toastError("手机号不能为空！");
+        return false;
+      }
+      if(this.password == ""){
+        this.toastError("密码不能为空！");
+        return false;
+      }
+      return true;
+    },
+    login(){
+      if(!this.check()){
+        return;
+      }
+      let data = {
+        number:this.number,
+        password:this.password,
+        wxOpenid: this.wxOpenid,
+      };
+      this.$dialog.loading.open('登录中');
+      this.$store.dispatch("FETCH_LOGIN",{data})
+        .then(data=>{
+        this.$dialog.loading.close();
+          if(this.$store.state.code["success"] == data.errorCode){
+            localStorage.setItem(this.$store.state.key["customer"], JSON.stringify(data.data));
+            this.$dialog.toast({
+              mes:"登录成功",
+              timeout:1500,
+              icon:"success",
+            });
+            this.$store.dispatch('FETCH_LOGIN_CACHE');
+            this.$router.push("/");
+          }else{
+            this.$dialog.toast({
+            mes:data.errorInfo,
+            timeout:1500,
+            icon:"error",
+          })
+          }
+        }).catch((e)=>{
+          console.error(e)
+          this.$dialog.toast({
+          mes:"网络错误请稍后重试",
+          timeout:1500,
+          icon:"error",
+        })
+        })
+    }
   }
 
 }

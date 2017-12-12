@@ -22,7 +22,7 @@
             <img slot="icon" src="/static/img/icon/a2.png">
             <span slot="text">手机维修</span>
         </yd-grids-item>
-        <yd-grids-item link="userLuck">
+        <yd-grids-item @click.native="noOpen">
             <img slot="icon" src="/static/img/icon/a3.png">
             <span slot="text">开奖中心</span>
         </yd-grids-item>
@@ -58,8 +58,13 @@ export default {
     return {
     }
   },
+  watch:{
+  },
   created () {
-    this.$store.dispatch('FETCH_INDEX_HOT')
+    this.$dialog.loading.open()
+    this.$store.dispatch('FETCH_INDEX_HOT').then(()=>{
+      this.$dialog.loading.close();
+    })
   },
   methods:{
     goToQues: function(item){

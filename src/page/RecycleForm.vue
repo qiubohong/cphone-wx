@@ -1,7 +1,7 @@
 <template>
   <div class="recoverForm">
     <yd-navbar :title="title">
-      <router-link :to="'/recoverResult'+this.$store.state.recycleSelect.id" slot="left">
+      <router-link :to="'/recycleResult/'+this.$store.state.recycleSelect.id" slot="left">
         <yd-navbar-back-icon></yd-navbar-back-icon>
       </router-link>
     </yd-navbar>
@@ -80,32 +80,13 @@
         </yd-flexbox-item>
       </yd-flexbox>
       <yd-cell-group>
-        <yd-cell-item type="radio" style='padding-bottom:.2rem'>
+        <yd-cell-item type="radio" style='padding-bottom:.2rem' v-for="(store,index) in stores">
           <span slot="left">
-                <h3>创手机湖南xxx店</h3>
-                <p>门店地址：xxxxxxx</p>
-                <p>服务时间：xxxxxxx</p>
-                <p>联系电话：xxxxxxx</p>
+                <h3>{{store.name}}</h3>
+                <p>门店地址：{{store.address}}</p>
+                <p>联系电话：{{store.number}}</p>
               </span>
-          <input slot="right" type="radio" value="创手机湖南xxx店" v-model="checkedAddress" />
-        </yd-cell-item>
-        <yd-cell-item type="radio" style='padding-bottom:.2rem'>
-          <span slot="left">
-                <h3>创手机湖南xxx店</h3>
-                <p>门店地址：xxxxxxx</p>
-                <p>服务时间：xxxxxxx</p>
-                <p>联系电话：xxxxxxx</p>
-              </span>
-          <input slot="right" type="radio" value="创手机湖南xxx1店" v-model="checkedAddress" />
-        </yd-cell-item>
-        <yd-cell-item type="radio" style='padding-bottom:.2rem'>
-          <span slot="left">
-                <h3>创手机湖南xxx店</h3>
-                <p>门店地址：xxxxxxx</p>
-                <p>服务时间：xxxxxxx</p>
-                <p>联系电话：xxxxxxx</p>
-              </span>
-          <input slot="right" type="radio" value="创手机湖南xxx2店" v-model="checkedAddress" />
+          <input slot="right" type="radio" :value="index" v-model="storeIndex" />
         </yd-cell-item>
       </yd-cell-group>
     </yd-popup>
@@ -187,7 +168,17 @@ export default {
       address: "",
       cityModel: '',
       district: District,
-      checkedAddress: ''
+      checkedAddress: '',
+      storeIndex: -1,
+      selectStore:{},
+    }
+  },
+  watch:{
+    storeIndex(val){
+      if(val != -1){
+        this.selectStore = this.stores[val];
+        this.checkedAddress = this.stores[val].address;
+      }
     }
   },
   computed: {
@@ -197,6 +188,7 @@ export default {
     recycleSelect() {
       this.formData.recyclePhoneId = this.$store.state.recycleSelect.id;
       this.formData.recyclePhoneProblems = this.$store.state.recycleResult;
+      this.formData.customerId = this.$store.state.customer.id;
       return this.$store.state.recycleSelect;
     },
     offer() {
@@ -204,6 +196,9 @@ export default {
     },
     position() {
       return this.$store.state.position;
+    },
+    stores(){
+      return this.$store.state.stores;
     }
   },
   methods: {
@@ -245,6 +240,9 @@ export default {
     submitForm() {
       this.formData.address = this.cityModel + this.address;
       this.formData.positon = this.position.latitude + "," + this.position.longitude;
+      if(this.selectStore.id){
+        this.formData.storeId = this.selectStore.id;
+      }
       let check = this.checkForm();
       if (!check) {
         return;
@@ -273,16 +271,16 @@ export default {
       this.$dialog.loading.open();
       let longitude = (~~this.position.longitude).toFixed(6);
       let latitude = (~~this.position.latitude).toFixed(6);
-      this.$store.dispatch('FETECH_STORE', { latitude, longitude }).then(() => {
+      this.$store.dispatch('FETECH_STORE', { latitude, longitude }).then((data) => {
         this.$dialog.loading.close();
+        if(this.$store.state.code["success"] === data.errorCode){
+          this.$store.commit('SET_STORE',{data:data.data})
+        }else{
+          toastError(data.errorInfo)
+        }
         this.storeShow = true;
       }).catch(() => {
-        this.$dialog.loading.close();
-        this.$dialog.toast({
-          mes: '网络错误请稍后重试！',
-          timeout: 1500,
-          icon: 'error',
-        });
+        toastError('网络错误请稍后重试！');
       })
     },
     cancelStore() {

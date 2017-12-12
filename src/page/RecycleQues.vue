@@ -1,7 +1,7 @@
 <template>
   <div class="recoverQues">
     <yd-navbar :title="title">
-       <router-link :to="'/recoverIndex'+this.$store.state.recycleSelect.id" slot="left">
+       <router-link :to="'/recycleIndex'" slot="left">
             <yd-navbar-back-icon></yd-navbar-back-icon>
         </router-link>
     </yd-navbar>

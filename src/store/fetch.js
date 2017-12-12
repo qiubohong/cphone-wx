@@ -78,3 +78,10 @@ export function getMaintainPhones() {
 export function getStore(lat,lng) {
   return fetch({ url: BASE + `/storeinfo/nearlist/${lat}/${lng}`})
 }
+
+export function login(data) {
+  return fetch({ url: BASE + `/user/customer/login`,data})
+}
+export function sign(data) {
+  return fetch({ url: BASE + `/user/customer/sign`,data})
+}
