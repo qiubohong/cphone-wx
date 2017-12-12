@@ -68,7 +68,7 @@ export default {
   },
   methods:{
     goToQues: function(item){
-      localStorage.setItem(this.$store.state.key.selectRecycle,JSON.stringify(item));
+      localStorage.setItem(this.$store.state.key.recycleSelect,JSON.stringify(item));
       this.$store.dispatch('FETCH_SINGLE_RECYCLE');
       this.$router.push({ path: '/recycleQues/'+item.id })
     },

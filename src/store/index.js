@@ -92,7 +92,8 @@ export default new Vuex.Store({
       });
     },
     FETCH_SINGLE_RECYCLE:({ commit, dispatch, state })=>{
-      let data = JSON.parse(localStorage.getItem(state.key["selectRecycle"]));
+      let data = JSON.parse(localStorage.getItem(state.key["recycleSelect"]));
+      console.log(data);
       commit('SET_RECYCLE_SELECT', { data })
     },
     FETCH_RECYCLE_PROBLEM:({ commit, dispatch, state }, {phoneId})=>{

@@ -34,8 +34,7 @@ export default {
   created(){
     this.$dialog.loading.open();
     if(!this.$store.recycleSelect){
-      this.$store.dispatch('FETCH_SINGLE_RECYCLE').then(()=>{
-      });
+      this.$store.dispatch('FETCH_SINGLE_RECYCLE')
       this.$store.dispatch('FETCH_RECYCLE_PROBLEM',{
         phoneId: this.$route.params.id
       });
@@ -44,6 +43,7 @@ export default {
   computed:{
     title(){
       if(this.$store.state.recycleSelect){
+        console.log(this.$store.state.recycleSelect)
         return "手机回收-"+this.$store.state.recycleSelect.name;
       }
       return "手机回收";
@@ -77,7 +77,7 @@ export default {
               icon: 'error',
               callback: () => {}
             });
-
+            flag = true;
           break;
           }else{
             answers.push({
