@@ -6,11 +6,11 @@
         </router-link>
       </yd-navbar>
       <yd-scrolltab style='top:1rem'>
-        <yd-scrolltab-panel v-for="item in list" :label="item.name">
+        <yd-scrolltab-panel v-for="item in repairs" :label="item.brandName">
             <yd-list theme="3">
-              <yd-list-item v-for="t in item.child" @click.native="show1 = true;">
-                  <img slot="img" :src="t.img">
-                  <div slot="title" style="text-align: center;">{{t.title}}</div>
+              <yd-list-item v-for="item2 in item.maintainPhones" @click.native="show1 = true;">
+                  <img slot="img" :src="item2.picUrl.indexOf('http') >= 0 ? item2.picUrl : 'http://'+item2.picUrl">
+                  <div slot="title" style="text-align: center;">{{item2.name}}</div>
                   <div slot="other">
                      <yd-button size="large" type="primary">立即维修</yd-button>
                   </div>
@@ -45,6 +45,9 @@
 <script>
 export default {
   name: 'repairIndex',
+  created:()=>{
+    this.$store.dispatch('FETCH_REPAIRS');
+  },
   data (){
     return {
       input7: '',
@@ -66,6 +69,11 @@ export default {
       show2:false,
       show1: false,
       checkbox3:[]
+    }
+  },
+  computed:{
+    repairs(){
+      return this.$store.state.repairs;
     }
   },
   methods: {

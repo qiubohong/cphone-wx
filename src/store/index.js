@@ -12,12 +12,16 @@ export default new Vuex.Store({
   state:{
     brands: [],
   	indexHot:[],
-    recycles: [],
+    recycles: [], //回收
     recycleSelect:{},
     recycleProblems:[],
-    recoverSelect:{},
+    recycleResult:{},
+
+    repairs: [], //维修
+    
     key:{
-      selectRecycle:"RECYCLE"
+      recycleSelect:"RECYCLE_SELECT",
+      recycleSubmit:"RECYCLE_SUBMIT",
     },
     pageLoading:false,
   },
@@ -26,21 +30,20 @@ export default new Vuex.Store({
       fetch.getBrands()
         .then(data => {
           commit('SET_BRANDS', { data })
-          return Promise.resolve(data);
         })
     },
   	FETCH_INDEX_HOT:({ commit, dispatch, state })=>{
   		fetch.getIndexHot()
   			.then(data => {
           commit('SET_INDEX_HOT', { data })
-          return Promise.resolve(data);
         })
   	},
     FETCH_RECYCLES:({ commit, dispatch, state },{brandId})=>{
+      state.pageLoading = true;
       fetch.getRecyclePhones(brandId)
         .then(data => {
-          commit('SET_RECYCLE', { data })
-          return Promise.resolve(data);
+          commit('SET_RECYCLE', { data });
+          state.pageLoading = false;
         })
     },
     FETCH_SINGLE_RECYCLE:({ commit, dispatch, state })=>{
@@ -63,6 +66,18 @@ export default new Vuex.Store({
           callback(data);
         })
     },
+    FETCH_RECCYLE_RESULT:({ commit, dispatch, state })=>{
+      let data = JSON.parse(localStorage.getItem(state.key["recycleSubmit"]));
+      commit('SET_RECYCLE_RESULT', { data })
+    },
+    FETCH_REPAIRS: ({ commit, dispatch, state })=>{
+      state.pageLoading = true;
+      fetch.getMaintainPhones(brandId)
+        .then(data => {
+          commit('SET_REPAIRS', { data });
+          state.pageLoading = false;
+        })
+    }, 
   },
   mutations:{
     SET_BRANDS: (state,{data}) =>{
@@ -77,6 +92,7 @@ export default new Vuex.Store({
     },
     SET_RECYCLE: (state,{data}) =>{
       let recycles = Object.assign([], state.recycles);
+      let brands = Object.assign([], state.brands);
       data.data.forEach((item2, idx) => {
         let flag = false;
         recycles.forEach((item, index) => {
@@ -86,11 +102,14 @@ export default new Vuex.Store({
           }
         });
         !flag && recycles.push(item2);
-      })
+      });
       state.recycles = recycles;
     },
     SET_RECYCLE_SELECT:(state, {data}) =>{
-      state.recoverSelect = data;
+      state.recycleSelect = data;
+    },
+    SET_RECYCLE_RESULT:(state, {data}) =>{
+      state.recycleResult = data;
     },
     SET_RECYCLE_PROBLEMS:(state, {data}) =>{
       if(data.errorCode == SUCCESS){
@@ -109,8 +128,12 @@ export default new Vuex.Store({
         state.recycleProblems = [];
       }
     },
-    SET_RECOVER_SELECT:(state,{data}) => {
-      state.recoverSelect = data;
-    }
+    SET_REPAIRS: (state, {data})=>{
+      if(data.errorCode == SUCCESS){
+        state.repairs = data.data
+      }else{
+        state.repairs = [];
+      }
+    },
   }
 })

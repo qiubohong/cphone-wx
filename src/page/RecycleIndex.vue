@@ -28,9 +28,6 @@
 export default {
   name: 'recoverIndex',
   computed: {
-    list(){
-      return this.$store.state.indexHot
-    },
     brands(){
       const brands = this.$store.state.brands;
       brands.forEach((item,index)=>{
@@ -43,17 +40,10 @@ export default {
       return this.$store.state.brands;
     },
     phones(){
-      const recycles =  this.$store.state.recycles;
-      this.brands.forEach((item, index)=>{
-          var flag = false;
-        recycles.forEach((item2)=>{
-          if(item2.brandId === item.id){
-            flag = true;
-          }
-        })
-            this.brands[index].hasChild = flag;
-      })
-      return recycles;
+      return this.$store.state.recycles;
+    },
+    loading(){
+      return this.$store.state.pageLoading;
     }
   },
   data () {
@@ -61,18 +51,31 @@ export default {
     }
   },
   watch:{
+    phones:(recycles)=>{
+    },
+    loading:(val)=>{}
   },
   created () {
     this.$dialog.loading.open('很快加载好了');
-    this.$store.dispatch('FETCH_INDEX_HOT');
   },
   mounted(){
   },
   methods:{
     goToQues: function(item){
-      localStorage.setItem(this.$store.state.key.selectRecycle,JSON.stringify(item));
+      localStorage.setItem(this.$store.state.key.recycleSelect,JSON.stringify(item));
       this.$store.dispatch('FETCH_SINGLE_RECYCLE');
-      this.$router.push({ path: '/recoverQues/'+item.id })
+      this.$router.push({ path: '/recycleQues/'+item.id })
+    },
+    setBrand: function(){
+      this.brands.forEach((item, index)=>{
+        var flag = false;
+        this.phones.forEach((item2)=>{
+          if(item2.brandId === item.id){
+            flag = true;
+          }
+        });
+        this.brands[index].hasChild = flag;
+      })
     }
   }
 

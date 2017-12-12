@@ -1,7 +1,7 @@
 <template>
   <div class="recoverQues">
     <yd-navbar :title="title">
-       <router-link to="/recoverIndex" slot="left">
+       <router-link :to="'/recoverIndex'+this.$store.state.recycleSelect.id" slot="left">
             <yd-navbar-back-icon></yd-navbar-back-icon>
         </router-link>
     </yd-navbar>
@@ -32,7 +32,8 @@
 export default {
   name: 'recoverIndex',
   created(){
-    if(!this.$store.recoverSelect){
+    this.$dialog.loading.open();
+    if(!this.$store.recycleSelect){
       this.$store.dispatch('FETCH_SINGLE_RECYCLE').then(()=>{
       });
       this.$store.dispatch('FETCH_RECYCLE_PROBLEM',{
@@ -42,8 +43,8 @@ export default {
   },
   computed:{
     title(){
-      if(this.$store.state.recoverSelect){
-        return "手机回收-"+this.$store.state.recoverSelect.name;
+      if(this.$store.state.recycleSelect){
+        return "手机回收-"+this.$store.state.recycleSelect.name;
       }
       return "手机回收";
     },
@@ -53,13 +54,8 @@ export default {
     }
   },
   watch:{
-    loading: (val)=>{
-      console.log(val)
-      if(val){
-        this.$dialog.loading.open();
-      }else{
-        this.$dialog.loading.close();
-      }
+    problems(){
+      this.$dialog.loading.close();
     }
   },
   data () {
@@ -86,7 +82,7 @@ export default {
           }else{
             answers.push({
               problemId:val.id,
-              selects:[...val.checked]
+              selectIds:[...val.checked]
             })
           }
         }else {
@@ -101,7 +97,7 @@ export default {
           }else{
             answers.push({
               problemId:val.id,
-              selects:[val.checked]
+              selectIds:[val.checked]
             })
 
           }
@@ -117,14 +113,24 @@ export default {
           ...answers
         ]
       }
-      console.log(JSON.stringify(submitData))
+      this.$dialog.loading.open();
       this.$store.dispatch("FETCH_RECYCLE_OFFER",{
         submitData,
-        callback(res){
-          console.log(res)
+        callback: (res)=>{
+          this.$dialog.loading.close();
+          if(!res || !res.data){
+            this.$dialog.toast({
+              mes: '网络有问题请稍后重试',
+              icon: 'error',
+            })
+            return;
+          }
+          submitData.price = res.data;
+          localStorage.setItem(this.$store.state.key["recycleSubmit"], JSON.stringify(submitData));
+          this.$store.dispatch("FETCH_RECCYLE_RESULT")
+          this.$router.push("/recycleResult/"+this.phoneId);
         }
       })
-      //this.$router.push("/recoverResult");
     }
   }
 

@@ -4,15 +4,15 @@ import Index from '@/page/Index'
 
 import Login from '@/page/Login'
 
-import RecoverIndex from '@/page/RecoverIndex'
-import RecoverQues from '@/page/RecoverQues'
-import RecoverResult from '@/page/RecoverResult'
-import RecoverForm from '@/page/RecoverForm'
+import RecycleIndex from '@/page/RecycleIndex'
+import RecycleQues from '@/page/RecycleQues'
+import RecycleResult from '@/page/RecycleResult'
+import RecycleForm from '@/page/RecycleForm'
 import FormSuccess from '@/page/FormSuccess'
 import RepairIndex from '@/page/RepairIndex'
 import RepairForm from '@/page/RepairForm'
 import UserIndex from '@/page/UserIndex'
-import RecoverOrder from '@/page/RecoverOrder'
+import RecycleOrder from '@/page/RecycleOrder'
 import RepairOrder from '@/page/RepairOrder'
 import UserLuck from '@/page/UserLuck'
 
@@ -31,24 +31,24 @@ export default new Router({
       component: Login
     },
     {
-      path: '/recoverIndex',
-      name: 'recoverIndex',
-      component: RecoverIndex
+      path: '/recycleIndex',
+      name: 'recycleIndex',
+      component: RecycleIndex
     },
     {
-      path: '/recoverQues/:id',
-      name: 'recoverQues',
-      component: RecoverQues
+      path: '/recycleQues/:id',
+      name: 'recycleQues',
+      component: RecycleQues
     },
     {
-      path: '/recoverResult',
-      name: 'recoverResult',
-      component: RecoverResult
+      path: '/recycleResult/:id',
+      name: 'recycleResult',
+      component: RecycleResult
     },
     {
-      path: '/recoverForm',
-      name: 'recoverForm',
-      component: RecoverForm
+      path: '/recycleForm',
+      name: 'recycleForm',
+      component: RecycleForm
     },
     {
       path: '/formSuccess/:router',
@@ -71,9 +71,9 @@ export default new Router({
       component: UserIndex
     },
     {
-      path: '/recoverOrder',
-      name: 'recoverOrder',
-      component: RecoverOrder
+      path: '/recycleOrder',
+      name: 'recycleOrder',
+      component: RecycleOrder
     },
     {
       path: '/repairOrder',

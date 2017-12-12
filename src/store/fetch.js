@@ -65,3 +65,7 @@ export function getRecycleProblems(phoneId) {
 export function recycleOffer(data) {
   return fetch({ url: BASE + `recycle/offer`, method: "post", data })
 }
+
+export function getMaintainPhones() {
+  return fetch({ url: BASE + `maintain/getMaintainPhones`})
+}

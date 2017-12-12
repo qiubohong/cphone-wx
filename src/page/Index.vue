@@ -14,7 +14,7 @@
         </yd-slider-item>
     </yd-slider>
     <yd-grids-group :rows="3">
-        <yd-grids-item link="recoverIndex">
+        <yd-grids-item link="recycleIndex">
             <img slot="icon" src="/static/img/icon/a1.png">
             <span slot="text">手机回收</span>
         </yd-grids-item>
@@ -65,7 +65,7 @@ export default {
     goToQues: function(item){
       localStorage.setItem(this.$store.state.key.selectRecycle,JSON.stringify(item));
       this.$store.dispatch('FETCH_SINGLE_RECYCLE');
-      this.$router.push({ path: '/recoverQues/'+item.id })
+      this.$router.push({ path: '/recycleQues/'+item.id })
     },
     noOpen: function(){
       this.$dialog.alert({
