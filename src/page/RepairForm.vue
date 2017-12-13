@@ -200,6 +200,8 @@ export default {
       return "手机维修-" + this.$store.state.repairSelect.name + "-订单";
     },
     repair() {
+      this.formData.maintainPhoneId = this.$store.state.repairSelect.id;
+      this.formData.customerId = this.$store.state.customer.id;
       return this.$store.state.repairSelect;
     },
     problems() {
