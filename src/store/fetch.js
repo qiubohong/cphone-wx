@@ -62,8 +62,8 @@ export function getRecycleProblems(phoneId) {
   return fetch({ url: BASE + `recycle/getRecycleProblems/${phoneId}` })
 }
 
-export function getRecycleById(data){
-  return fetch({ url: BASE + `admin/recycle/phone/queryById`,data })
+export function getRecycleById(recyclePhoneId){
+  return fetch({ url: BASE + `recycle/recyclePhoneInfo/${recyclePhoneId}`})
 }
 
 export function recycleOffer(data) {
@@ -90,6 +90,9 @@ export function getMaintainProblems(phoneId){
   return fetch({ url: BASE + `maintain/getMaintainProblems/${phoneId}`})
 }
 
+export function repariOffer(data){
+  return fetch({ url: BASE + `maintain/offer`,data, method:"post"})
+}
 
 export function getStore(lat,lng) {
   return fetch({ url: BASE + `/storeinfo/nearlist/${lat}/${lng}`})

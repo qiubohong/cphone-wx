@@ -51,15 +51,15 @@
       <template v-if='formData.serviceType == 3'>
         <yd-cell-item>
           <span slot="left">锁屏密码：</span>
-          <input slot="right" type="text" v-model="formData.iphonePasswd" placeholder="请输入锁屏密码">
+          <input v-model="formData.iphonePasswd" slot="right" type="text" placeholder="请输入锁屏密码">
         </yd-cell-item>
         <yd-cell-item>
           <span slot="left">快递公司：</span>
-          <input slot="right" type="text" placeholder="请输入快递公司">
+          <input v-model="formData.expressCompany" slot="right" type="text" placeholder="请输入快递公司">
         </yd-cell-item>
         <yd-cell-item>
           <span slot="left">快递单号：</span>
-          <input slot="right" type="number" placeholder="请输入快递单号">
+          <input v-model="formData.expressNumber" slot="right" type="number" placeholder="请输入快递单号">
         </yd-cell-item>
       </template>
     </yd-cell-group>
@@ -69,7 +69,9 @@
     <div style="margin: 0 .2rem">
       <yd-button size="large" type="danger" @click.native="backQues">重新评估</yd-button>
     </div>
+    
     <yd-cityselect :provance="cityProps.provance" v-model="cityShow" :done="cityResult" :items="district"></yd-cityselect>
+
     <yd-popup v-model="storeShow" position="bottom" height="95%">
       <yd-flexbox style="margin: .2rem;">
         <yd-flexbox-item>
@@ -94,31 +96,8 @@
 </template>
 <script>
 import District from 'ydui-district/dist/gov_province_city_area_id';
+import {formateDate} from '../utils/index'
 
-function formateDate(date, format) {
-  if (Object.prototype.toString.call(date) !== "[object Date]") {
-    return;
-  }
-  var regexpObj = {
-    "M+": date.getMonth() + 1,
-    "d+": date.getDate(),
-    "h+": date.getHours(),
-    "m+": date.getMinutes(),
-    "s+": date.getSeconds(),
-    "q+": Math.floor((date.getMonth() + 3) / 3),
-    "S+": date.getMilliseconds()
-  };
-  if (/(y+)/i.test(format)) {
-    format = format.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-  }
-  for (var k in regexpObj) {
-    if (new RegExp("(" + k + ")").test(format)) {
-      format = format.replace(RegExp.$1, RegExp.$1.length == 1 ?
-        regexpObj[k] : ("00" + regexpObj[k]).substr(("" + regexpObj[k]).length));
-    }
-  }
-  return format;
-}
 
 export default {
   name: 'recoverForm',
@@ -275,10 +254,10 @@ export default {
         this.$dialog.loading.close();
         if(this.$store.state.code["success"] === data.errorCode){
           this.$store.commit('SET_STORE',{data:data.data})
+          this.storeShow = true;
         }else{
           toastError(data.errorInfo)
         }
-        this.storeShow = true;
       }).catch(() => {
         toastError('网络错误请稍后重试！');
       })

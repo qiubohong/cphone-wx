@@ -36,7 +36,7 @@ export default new Vuex.Store({
       recycleSelect:"RECYCLE_SELECT",
       recycleSubmit:"RECYCLE_SUBMIT",
       repairSelect: "REPAIR_SELECT",
-      repairProblem: "REPAIR_PROBLEM",
+      repairProblems: "REPAIR_PROBLEM",
       position:{
         longitude: "LONGITUDE",
         latitude: "LATITUDE",
@@ -96,9 +96,9 @@ export default new Vuex.Store({
         }).catch(reject);
       });
     },
-    FETCH_RECYCLE_ID:({ commit, dispatch, state },{param})=>{
+    FETCH_RECYCLE_ID:({ commit, dispatch, state },{phoneId})=>{
       return new Promise((resolve,reject)=>{
-      fetch.getRecycleById(param)
+      fetch.getRecycleById(phoneId)
         .then(data => {
           resolve(data);
         }).catch(reject);
@@ -185,6 +185,14 @@ export default new Vuex.Store({
         problems = JSON.parse(localStorage.getItem(state.key["repairProblems"]));
       }catch(e){ }
       commit('SET_SELECT_REPAIR', { repair, problems })
+    },
+    FETCH_REPAIR_OFFER:({commit, dispatch, state}, {submitData}) => {
+      return new Promise((resolve,reject)=>{
+        fetch.repariOffer(submitData)
+        .then(data => {
+          resolve(data);
+        }).catch(reject);
+      })
     },
 
     FETCH_POSITION:({ commit, dispatch, state })=>{

@@ -102,7 +102,7 @@ export default {
       this.$store.dispatch('FETCH_RECYCLE_ORDERLIST', { customerId: this.$store.state.customer.id }).then((data) => {
         this.$dialog.loading.close();
         data.data.forEach((item, index) => {
-          this.$store.dispatch('FETCH_RECYCLE_ID', { param: { recyclePhoneId: item.recyclePhoneId } })
+          this.$store.dispatch('FETCH_RECYCLE_ID', {  phoneId: item.recyclePhoneId  })
             .then((data) => {
               this.list[index].recyclePhoneName = data.data.name;
               this.$forceUpdate();
