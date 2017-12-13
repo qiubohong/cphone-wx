@@ -6,9 +6,9 @@
         </router-link>
       </yd-navbar>
       <yd-scrolltab style='top:1rem'>
-        <yd-scrolltab-panel v-for="item in repairs" :label="item.brandName">
+        <yd-scrolltab-panel v-if="item.maintainPhones.length > 0" v-for="item in repairs" :label="item.brandName">
             <yd-list theme="3">
-              <yd-list-item v-for="item2 in item.maintainPhones" @click.native="show1 = true;">
+              <yd-list-item v-for="item2 in item.maintainPhones" @click.native="getProblem(item2)">
                   <img slot="img" :src="item2.picUrl.indexOf('http') >= 0 ? item2.picUrl : 'http://'+item2.picUrl">
                   <div slot="title" style="text-align: center;">{{item2.name}}</div>
                   <div slot="other">
@@ -18,26 +18,14 @@
           </yd-list>
         </yd-scrolltab-panel>
       </yd-scrolltab>
-       <yd-popup v-model="show1" position="bottom" height="auto" style="padding:.2rem;">
+       <yd-popup v-model="problemShow" position="bottom" height="auto" style="padding:.2rem;">
           <div style="margin:.2rem .2rem .5rem .2rem">
-            <h3 style="font-size:.4rem;margin-bottom:.5rem">iPhone6</h3>
-            <yd-checkbox-group v-model="checkbox3">
-                <yd-checkbox val="1">屏碎</yd-checkbox>
-                <yd-checkbox val="2">电池故障</yd-checkbox>
-                <yd-checkbox val="3">外壳更换</yd-checkbox>
+            <h3 style="font-size:.4rem;margin-bottom:.5rem">{{repairSelect.name}}</h3>
+            <yd-checkbox-group v-model="selectPrombles">
+                <yd-checkbox :val="index" v-for="(p,index) in problems">{{p.problemName}}</yd-checkbox>
             </yd-checkbox-group>
           </div>
           <yd-button type="primary" size="large" @click.native="selectRepairType">下一步</yd-button>
-        </yd-popup>
-        <yd-popup v-model="show2" position="right" height="100%" style="padding:.2rem;">
-          <yd-cell-group>
-              <yd-cell-item>
-                <span slot="left" style="margin-right:.15rem">
-                  <yd-navbar-back-icon></yd-navbar-back-icon>
-                </span>
-                <yd-input slot="right" v-model="input7" placeholder="请输入搜索的型号"></yd-input>
-              </yd-cell-item>
-            </yd-cell-group>
         </yd-popup>
     </div>
     </div>
@@ -45,30 +33,17 @@
 <script>
 export default {
   name: 'repairIndex',
-  created:()=>{
-    this.$store.dispatch('FETCH_REPAIRS');
+  created(){
+    this.$dialog.loading.open();
+    this.$store.dispatch('FETCH_REPAIRS')
+      .then(()=> this.$dialog.loading.close());
   },
   data (){
     return {
-      input7: '',
-      list: [{name:"iPhone",child:[
-          {img: "/static/img/product.jpg", title: "iphone6"},
-          {img: "/static/img/product.jpg", title: "iphone7"},
-          {img: "/static/img/product.jpg", title: "iphone7"}]},
-        {name:"华为",child:[
-          {img: "/static/img/product.jpg", title: "华为Mate7"},
-          {img: "/static/img/product.jpg", title: "华为Mate7"},
-          {img: "/static/img/product.jpg", title: "华为Mate6"}]},
-        {name:"oppo",child:[
-          {img: "/static/img/product.jpg", title: "r11"},
-          {img: "/static/img/product.jpg", title: "r9"},{img: "/static/img/product.jpg", title: "r7"}]},
-        {name:"vivo",child:[{img: "/static/img/product.jpg", title: "y67"},{img: "/static/img/product.jpg", title: "a11"},{img: "/static/img/product.jpg", title: "f87"}]},
-        {name:"小米",child:[{img: "/static/img/product.jpg", title: "M10"},{img: "/static/img/product.jpg", title: "小米6"},{img: "/static/img/product.jpg", title: "小米5"}]},
-        {name:"金立",child:[{img: "/static/img/product.jpg", title: "ty65"},{img: "/static/img/product.jpg", title: "金立1"},{img: "/static/img/product.jpg", title: "金立2"}]},
-      ],
-      show2:false,
-      show1: false,
-      checkbox3:[]
+      problemShow: false,
+      repairSelect: {},
+      problems:[],
+      selectPrombles:[],
     }
   },
   computed:{
@@ -77,18 +52,45 @@ export default {
     }
   },
   methods: {
+    toastError(mes){
+      this.$dialog.toast({
+        mes,
+        timeout:1500,
+        icon:"error"
+      })
+    },
+    getProblem(repair){
+      this.repairSelect = repair;
+      this.selectPrombles = [];
+      this.$dialog.loading.open();
+      this.$store.dispatch('FETCH_REPAIR_PROBLEMS',{phoneId:repair.id})
+      .then((data)=> {
+        this.$dialog.loading.close();
+        if(data.errorCode = this.$store.state.code["success"]){
+          this.problems = data.data;
+          this.problemShow = true;
+        }else{
+          toastError(data.errorInfo)
+        }
+      }).catch(()=>{
+        toastError("网络错误，请稍后重试！")
+      });
+    },
     selectRepairType: function(){
-      this.$router.push("/repairForm");
-      this.show1 = false;
-      return;
-      if(this.checkbox3.length == 0){
-        this.$dialog.toast({
-          mes: '您还未选择任何故障',
-          timeout: 1500
-        });
+      if(this.selectPrombles.length == 0){
+        this.toastError('您还未选择任何故障')
         return;
       }
-      this.show1 = false;
+      let problems = [];
+      this.selectPrombles.forEach((val)=>{
+        problems.push(this.problems[val]);
+      });
+      
+      localStorage.setItem(this.$store.state.key['repairSelect'], JSON.stringify(this.repairSelect));
+      localStorage.setItem(this.$store.state.key['repairProblem'], JSON.stringify(problems));
+      this.$store.dispatch('FETCH_SELECT_REPAIR');
+      this.problemShow = false;
+      this.$router.push("/repairForm");
     }
   }
 }

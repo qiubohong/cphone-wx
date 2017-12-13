@@ -16,8 +16,11 @@ export default new Vuex.Store({
     recycleSelect:{},
     recycleProblems:[],
     recycleResult:{},
+    recycleOrderList:[],
 
     repairs: [], //维修
+    repairSelect:{}, //选中的维修手机
+    repairProblems: [], //选中的故障
     
     stores:[],
 
@@ -32,6 +35,8 @@ export default new Vuex.Store({
     key:{
       recycleSelect:"RECYCLE_SELECT",
       recycleSubmit:"RECYCLE_SUBMIT",
+      repairSelect: "REPAIR_SELECT",
+      repairProblem: "REPAIR_PROBLEM",
       position:{
         longitude: "LONGITUDE",
         latitude: "LATITUDE",
@@ -91,6 +96,14 @@ export default new Vuex.Store({
         }).catch(reject);
       });
     },
+    FETCH_RECYCLE_ID:({ commit, dispatch, state },{param})=>{
+      return new Promise((resolve,reject)=>{
+      fetch.getRecycleById(param)
+        .then(data => {
+          resolve(data);
+        }).catch(reject);
+      });
+    },
     FETCH_SINGLE_RECYCLE:({ commit, dispatch, state })=>{
       let data = JSON.parse(localStorage.getItem(state.key["recycleSelect"]));
       console.log(data);
@@ -129,14 +142,51 @@ export default new Vuex.Store({
       }catch(e){ }
       commit('SET_RECYCLE_RESULT', { data })
     },
+    FETCH_RECYCLE_ORDERLIST:({ commit, dispatch, state }, {customerId})=>{
+      return new Promise((resolve,reject)=>{
+        fetch.getRecycleOrderList(customerId)
+          .then(data => {
+            resolve(data);
+            commit('SET_RECYCLE_ORDERLIST',{data});
+          }).catch(reject);
+      });
+    },
+    FETCH_RECYCLE_CANCLEORDER:({ commit, dispatch, state }, {orderSn,customerId})=>{
+      return new Promise((resolve,reject)=>{
+        fetch.cacnleRecycleOrder(orderSn,customerId)
+          .then(data => {
+            resolve(data);
+          }).catch(reject);
+      });
+    },
+    //维修
     FETCH_REPAIRS: ({ commit, dispatch, state })=>{
-      state.pageLoading = true;
-      fetch.getMaintainPhones(brandId)
+      return new Promise((resolve,reject)=>{
+        fetch.getMaintainPhones()
         .then(data => {
+          resolve(data);
           commit('SET_REPAIRS', { data });
-          state.pageLoading = false;
-        })
+        }).catch(reject)
+      })
     }, 
+    FETCH_REPAIR_PROBLEMS: ({ commit, dispatch, state }, {phoneId})=>{
+      return new Promise((resolve,reject)=>{
+        fetch.getMaintainProblems(phoneId)
+        .then(data => {
+          resolve(data);
+        }).catch(reject)
+      })
+    }, 
+    FETCH_SELECT_REPAIR:({ commit, dispatch, state })=>{
+      let repair = {};
+      let problems = [];
+      try{
+        repair = JSON.parse(localStorage.getItem(state.key["repairSelect"]));
+        problems = JSON.parse(localStorage.getItem(state.key["repairProblems"]));
+      }catch(e){ }
+      commit('SET_SELECT_REPAIR', { repair, problems })
+    },
+
     FETCH_POSITION:({ commit, dispatch, state })=>{
       let longitude = localStorage.getItem(state.key.position.longitude);
       let latitude = localStorage.getItem(state.key.position.latitude);
@@ -145,6 +195,14 @@ export default new Vuex.Store({
     FETECH_STORE: ({ commit, dispatch, state }, {latitude, longitude })=>{
       return new Promise((resolve,reject)=>{
         fetch.getStore(latitude,longitude)
+        .then(data => {
+          resolve(data);
+        }).catch(reject);
+      })
+    },
+    FETECH_STORE_ID: ({ commit, dispatch, state }, {storeId })=>{
+      return new Promise((resolve,reject)=>{
+        fetch.getStoreById(storeId)
         .then(data => {
           resolve(data);
         }).catch(reject);
@@ -203,12 +261,23 @@ export default new Vuex.Store({
         state.recycleProblems = [];
       }
     },
+    SET_RECYCLE_ORDERLIST: (state,{data}) =>{
+      if(data.errorCode == SUCCESS){
+        state.recycleOrderList = data.data
+      }else{
+        state.recycleOrderList = [];
+      }
+    },
     SET_REPAIRS: (state, {data})=>{
       if(data.errorCode == SUCCESS){
         state.repairs = data.data
       }else{
         state.repairs = [];
       }
+    },
+    SET_SELECT_REPAIR: (state, {repair, problems})=>{
+      state.repairSelect = repair;
+      state.repairProblems = problems;
     },
     SET_POSITION: (state, {longitude,latitude})=>{
       if(!longitude || !latitude){

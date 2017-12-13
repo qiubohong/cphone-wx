@@ -54,12 +54,16 @@ export function getRecyclePhones(brandId) {
   return fetch({ url: BASE + `recycle/getRecyclePhones/${brandId}` })
 }
 
-export function getRecycleById(brandId) {
+export function getRecycleByBrandId(brandId) {
   return fetch({ url: BASE + `recycle/getRecyclePhones/${brandId}` })
 }
 
 export function getRecycleProblems(phoneId) {
   return fetch({ url: BASE + `recycle/getRecycleProblems/${phoneId}` })
+}
+
+export function getRecycleById(data){
+  return fetch({ url: BASE + `admin/recycle/phone/queryById`,data })
 }
 
 export function recycleOffer(data) {
@@ -70,13 +74,29 @@ export function recycleOrder(data) {
   return fetch({ url: BASE + `recycle/order/commitOrder`, method: "post", data })
 }
 
+export function getRecycleOrderList(customerId) {
+  return fetch({ url: BASE + `recycle/order/orderList/${customerId}`})
+}
+
+export function cacnleRecycleOrder(orderSn,customerId) {
+  return fetch({ url: BASE + `recycle/order/cacnleOrder/${orderSn}/${customerId}`, data:{orderSn,customerId}})
+}
+
 export function getMaintainPhones() {
   return fetch({ url: BASE + `maintain/getMaintainPhones`})
+}
+
+export function getMaintainProblems(phoneId){
+  return fetch({ url: BASE + `maintain/getMaintainProblems/${phoneId}`})
 }
 
 
 export function getStore(lat,lng) {
   return fetch({ url: BASE + `/storeinfo/nearlist/${lat}/${lng}`})
+}
+
+export function getStoreById(storeId) {
+  return fetch({ url: BASE + `storeinfo/storeInfo/${storeId}`})
 }
 
 export function login(data) {

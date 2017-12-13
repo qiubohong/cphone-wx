@@ -10,8 +10,8 @@
         <img src="/static/img/product.jpg" alt="" style="width:100%">
       </div>
       <div class="userName">
-        <span>{{username}}</span>
-        <yd-icon name="feedback" size=".3rem"></yd-icon>
+        <span>{{customer.name}}</span>
+        <yd-icon name="feedback" size=".3rem" style="display:none;"></yd-icon>
       </div>
     </div>
     <yd-cell-group>
@@ -22,7 +22,7 @@
             </span>
             <span slot="right"></span>
         </yd-cell-item>
-        <yd-cell-item arrow type="link" href="recoverOrder">
+        <yd-cell-item arrow type="link" href="recycleOrder">
             <span slot="left">
               <img src="/static/img/icon/recover.png" alt="" style="height:.5rem;display:inline-block;    vertical-align: middle;">
               <span>回收订单</span>
@@ -43,10 +43,18 @@
 <script>
 export default {
   name: 'userIndex',
+  created(){
+
+  },
   data () {
     return {
       title:"用户中心",
       username:"用户昵称"
+    }
+  },
+  computed:{
+    customer(){
+      return this.$store.state.customer;
     }
   },
   methods:{
