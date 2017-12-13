@@ -82,6 +82,7 @@ export function cacnleRecycleOrder(orderSn,customerId) {
   return fetch({ url: BASE + `recycle/order/cacnleOrder/${orderSn}/${customerId}`, data:{orderSn,customerId}})
 }
 
+//维修
 export function getMaintainPhones() {
   return fetch({ url: BASE + `maintain/getMaintainPhones`})
 }
@@ -93,7 +94,11 @@ export function getMaintainProblems(phoneId){
 export function repariOffer(data){
   return fetch({ url: BASE + `maintain/offer`,data, method:"post"})
 }
+export function repariOrder(data) {
+  return fetch({ url: BASE + `maintain/order/commitOrder`, method: "post", data })
+}
 
+//通用
 export function getStore(lat,lng) {
   return fetch({ url: BASE + `/storeinfo/nearlist/${lat}/${lng}`})
 }

@@ -5,11 +5,13 @@
         <yd-navbar-back-icon></yd-navbar-back-icon>
       </router-link>
     </yd-navbar>
-    <yd-accordion>
-      <yd-accordion-item v-for="item in problems" :title="item.problemName + ': '+item.checked">
+    <yd-accordion accordion>
+      <yd-accordion-item v-for="(item,index) in problems" :title="item.problemName + ': '+selects[index]" :open="index == 0">
         <div style="padding: .24rem;">
-          <yd-radio-group v-model="item.checked">
-            <yd-radio :val="option.problemItem" v-for='option in item.selects'>{{option.problemItem + ' ￥' + option.cost}}</yd-radio>
+          <yd-radio-group v-model="selects[index]" >
+            <yd-radio :val="option.problemItem" v-for='option in item.selects'>
+              <span>{{option.problemItem + ' ￥' + option.cost}}</span>
+            </yd-radio>
           </yd-radio-group>
         </div>
       </yd-accordion-item>
@@ -22,7 +24,7 @@
       <yd-cell-item>
         <span slot="left">维修方式：</span>
         <div slot="right">
-          <yd-radio-group v-model="formData.serviceType" @change.native="changeType">
+          <yd-radio-group v-model="formData.serviceType">
             <yd-radio val="1">上门</yd-radio>
             <yd-radio val="2">门店</yd-radio>
             <yd-radio val="3">邮寄</yd-radio>
@@ -68,7 +70,7 @@
       </template>
     </yd-cell-group>
     <div style="margin: 0 .2rem">
-      <yd-button size="large" type="primary" @click.native="confirmShow = true">提交</yd-button>
+      <yd-button size="large" type="primary" @click.native="confirm">提交</yd-button>
     </div>
     <!-- 城市选择 -->
     <yd-cityselect :provance="cityProps.provance" v-model="cityShow" :done="cityResult" :items="district"></yd-cityselect>
@@ -170,11 +172,7 @@ export default {
         expressCompany: "",
         expressNumber: "",
         iphonePasswd: "",
-        problemSelects: [{
-          problemId: "",
-          problemItem: "",
-          cost: ""
-        }],
+        problemSelects: [],
         positon: "",
       },
       //城市控制器
@@ -193,6 +191,8 @@ export default {
 
       confirmShow: false,
       district: District,
+
+      selects: [],
     }
   },
   computed: {
@@ -205,9 +205,9 @@ export default {
     problems() {
       const ps = this.$store.state.repairProblems;
       ps.forEach((item) => {
-        item.checked = "";
-        if (item.selects.length = 1) {
-          item.checked = item.selects[0].problemItem;
+        this.selects.push("")
+        if (item.selects.length == 1) {
+          this.selects.push(item.selects[0].problemItem);
         }
       })
       return ps;
@@ -220,17 +220,20 @@ export default {
     }
   },
   watch: {
-    problems(val) {
+    selects(val) {
       this.money = 0;
-      val.forEach((item) => {
-        item.selects.forEach((item2) => {
-          if (item2.problemItem == item.checked) {
+      val.forEach((item,index) => {
+        if(this.problems[index]){
+          this.problems[index].selects.forEach((item2) => {
+          if (item2.problemItem == item) {
             this.money += (~~item2.cost);
             this.formData.problemSelects.push({
               ...item2
             })
           }
         })
+        }
+        
       })
     },
     storeIndex(val) {
@@ -247,6 +250,13 @@ export default {
     }
   },
   methods: {
+    toastError(mes){
+      this.$dialog.toast({
+        mes,
+        timeout:1500,
+        icon:"error"
+      })
+    },
     cityResult(ret) {
       this.cityModel = ret.itemName1 + ' ' + ret.itemName2 + ' ' + ret.itemName3;
     },
@@ -298,19 +308,29 @@ export default {
 
       return true;
     },
-    submitForm: function() {
+    confirm(){
       this.formData.positon = this.position.latitude + "," + this.position.longitude;
       if(this.selectStore.id){
         this.formData.storeId = this.selectStore.id;
       }
-
       let check = this.checkForm();
       if (!check) {
         return;
       }
-
-      console.log(this.formData)
-      //this.$router.push("/formSuccess/repairIndex");
+      this.confirmShow = true;
+    },
+    submitForm: function() {
+      let formData =this.formData;
+      this.$dialog.loading.open();
+      this.$store.dispatch('FETCH_REPAIR_ORDER',{formData})
+        .then((data) => {
+          this.$dialog.loading.close();
+          if (data.errorCode = this.$store.state.code["success"]) {
+            this.$router.push("/formSuccess/repairIndex");
+          } else {
+            toastError(data.errorInfo);
+          }
+        }).catch(() => this.toastError('网络错误，请稍后重试！'))
     },
     offer() {
       this.$store.dispatch('FETCH_REPAIR_OFFER', { submitData: problems })
@@ -329,6 +349,4 @@ export default {
 
 </script>
 <style scoped>
-
-
 </style>

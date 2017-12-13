@@ -86,12 +86,11 @@ export default {
         problems.push(this.problems[val]);
       });
       localStorage.setItem(this.$store.state.key['repairSelect'], JSON.stringify(this.repairSelect));
-      localStorage.setItem(this.$store.state.key['repairProblem'], JSON.stringify(problems));
+      localStorage.setItem(this.$store.state.key['repairProblems'], JSON.stringify(problems));
       this.$store.dispatch('FETCH_SELECT_REPAIR');
 
       this.problemShow = false;
       this.$router.push("/repairForm");
-      this.$dialog.loading.open();
     }
   }
 }

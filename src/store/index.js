@@ -194,7 +194,17 @@ export default new Vuex.Store({
         }).catch(reject);
       })
     },
-
+    FETCH_REPAIR_ORDER:({ commit, dispatch, state }, {formData})=>{
+      return new Promise((resolve,reject)=>{
+        fetch.repariOrder(formData)
+          .then(data => {
+            resolve(data);
+          }).catch((e)=>{
+            reject(e);
+          });
+      });
+    },
+    //通用
     FETCH_POSITION:({ commit, dispatch, state })=>{
       let longitude = localStorage.getItem(state.key.position.longitude);
       let latitude = localStorage.getItem(state.key.position.latitude);
