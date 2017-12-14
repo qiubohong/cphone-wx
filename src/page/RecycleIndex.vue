@@ -6,9 +6,9 @@
         </router-link>
      </yd-navbar>
      <yd-scrolltab style='top:1rem'>
-        <yd-scrolltab-panel v-for="item in brands" :label="item.brandName" v-if="item.hasChild">
+        <yd-scrolltab-panel v-for="item in phones" :label="item.brandName" v-if="item.recyclePhones.length > 0">
             <yd-list theme="3">
-              <yd-list-item v-for="item2 in phones" v-if="item2.brandId == item.id">
+              <yd-list-item v-for="item2 in item.recyclePhones">
                   <img slot="img" :src="item2.picUrl.indexOf('http') >= 0 ? item2.picUrl : 'http://'+item2.picUrl">
                   <div slot="title" style="text-align: center;">{{item2.name}}</div>
                   <div slot="other" style="text-align:center;padding:.1rem">
@@ -28,17 +28,6 @@
 export default {
   name: 'recoverIndex',
   computed: {
-    brands(){
-      const brands = this.$store.state.brands;
-      brands.forEach((item,index)=>{
-        item.hasChild = true;
-        this.$store.dispatch('FETCH_RECYCLES',{brandId:item.id})
-      })
-      if(brands.length > 0){
-        this.$dialog.loading.close();
-      }
-      return this.$store.state.brands;
-    },
     phones(){
       return this.$store.state.recycles;
     },
@@ -57,6 +46,9 @@ export default {
   },
   created () {
     this.$dialog.loading.open('很快加载好了');
+    this.$store.dispatch('FETCH_RECYCLES').then(()=>{
+      this.$dialog.loading.close();
+    })
   },
   mounted(){
   },

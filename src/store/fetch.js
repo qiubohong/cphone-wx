@@ -50,8 +50,8 @@ export function getIndexHot() {
   return fetch({ url: BASE + 'recycle/hotRecycles' })
 }
 
-export function getRecyclePhones(brandId) {
-  return fetch({ url: BASE + `recycle/getRecyclePhones/${brandId}` })
+export function getRecyclePhones() {
+  return fetch({ url: BASE + `recycle/getRecyclePhones` })
 }
 
 export function getRecycleByBrandId(brandId) {
@@ -90,26 +90,37 @@ export function getMaintainPhones() {
 export function getMaintainProblems(phoneId){
   return fetch({ url: BASE + `maintain/getMaintainProblems/${phoneId}`})
 }
-
+export function getRepariById(maintainPhoneId){
+  return fetch({ url: BASE + `maintain/maintainPhoneInfo/${maintainPhoneId}`})
+}
 export function repariOffer(data){
   return fetch({ url: BASE + `maintain/offer`,data, method:"post"})
 }
 export function repariOrder(data) {
   return fetch({ url: BASE + `maintain/order/commitOrder`, method: "post", data })
 }
-
+export function getRepairOrderList(customerId) {
+  return fetch({ url: BASE + `maintain/order/orderList/${customerId}`})
+}
+export function cacnleRepairOrder(orderSn,customerId) {
+  return fetch({ url: BASE + `maintain/order/cacnleOrder/${orderSn}/${customerId}`, data:{orderSn,customerId}})
+}
 //通用
 export function getStore(lat,lng) {
-  return fetch({ url: BASE + `/storeinfo/nearlist/${lat}/${lng}`})
+  return fetch({ url: BASE + `storeinfo/nearlist/${lat}/${lng}`})
 }
 
 export function getStoreById(storeId) {
   return fetch({ url: BASE + `storeinfo/storeInfo/${storeId}`})
 }
 
+//登录注册
 export function login(data) {
-  return fetch({ url: BASE + `/user/customer/login`,data})
+  return fetch({ url: BASE + `user/customer/login`,data})
 }
 export function sign(data) {
-  return fetch({ url: BASE + `/user/customer/sign`,data})
+  return fetch({ url: BASE + `user/customer/sign`,data})
+}
+export function sendSignCode(number) {
+  return fetch({ url: BASE + `user/sendSignCode/${number}`})
 }

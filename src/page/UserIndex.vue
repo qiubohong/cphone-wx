@@ -37,6 +37,9 @@
             <span slot="right"></span>
         </yd-cell-item>
     </yd-cell-group>
+    <div style="padding:.4rem">
+      <yd-button type="danger" size="large" @click.native="logout">退出登录</yd-button>
+    </div>
   </div>
 </template>
 
@@ -58,6 +61,11 @@ export default {
     }
   },
   methods:{
+    logout(){
+      localStorage.clear();
+      this.$store.dispatch('FETCH_LOGIN_CACHE');
+      this.$router.push('/login');
+    },
     noOpen: function(){
       this.$dialog.alert({
         title: '手机回收提示您',

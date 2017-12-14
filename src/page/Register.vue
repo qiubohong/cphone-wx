@@ -35,11 +35,13 @@
       </yd-cell-item>
     </yd-cell-group>
     <div style='margin:.2rem'>
-      <yd-button size="large" type="primary" @click.native="register">注册</yd-button>
+      <yd-button size="large" type="primary" @click.native="register">立即绑定</yd-button>
     </div>
   </div>
 </template>
 <script>
+import {sendSignCode} from '../store/fetch';
+
 export default {
   name: 'register',
   created(){
@@ -64,16 +66,25 @@ export default {
   },
   methods: {
     sendCode() {
+      let myreg = /^[1][3,4,5,7,8][0-9]{9}$/; 
+      if(!myreg.test(this.number)){
+        this.toastError('手机格式不正确！')
+        return;
+      }
       this.$dialog.loading.open('发送中');
-      setTimeout(() => {
-        this.$dialog.loading.close();
-        this.$dialog.toast({
-          mes:"发送成功",
-          timeout:1500,
-          icon:"success",
-        })
-        this.code = true;
-      }, 1000);
+      sendSignCode(this.number).then((data)=>{
+        if(this.$store.state.code["success"] == data.errorCode){
+          this.$dialog.loading.close();
+          this.$dialog.toast({
+            mes:"发送成功",
+            timeout:1500,
+            icon:"success",
+          })
+          this.code = true;
+        }else{
+          toastError(data.errorInfo);
+        }
+      }).catch(()=>toastError('网络错误请稍后重试'));
     },
     toastError(mes){
             this.$dialog.toast({

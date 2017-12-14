@@ -16,7 +16,10 @@
         </div>
         <yd-flexbox-item style="padding-top:.2rem">
           <div v-if="item.serviceType == 1">预约地址：{{item.address}}</div>
-          <div v-if="item.serviceType == 2">门店地址：{{item.storeName}}</div>
+          <template v-if="item.serviceType == 2">
+            <div>门店地址：{{item.storeName}}</div>
+            <div>门店电话：<a :href="'tel:'+item.storeNumber">{{item.storeNumber}}<yd-icon name="phone2" size=".2rem"></yd-icon></a></div>
+          </template>
           <div v-if="item.serviceType < 3">预约时间：{{item.period}}</div>
           <div>预约类型：{{serviceType[item.serviceType]}}</div>
           <!-- <div>手机号：1365487555124</div> -->
@@ -63,9 +66,6 @@ export default {
     }
   },
   watch: {
-    list(val) {
-
-    }
   },
   computed: {
     customer() {
@@ -110,6 +110,8 @@ export default {
           this.$store.dispatch('FETECH_STORE_ID', {storeId: item.storeId})
             .then((data) => {
               this.list[index].storeName = data.data.address + '('+data.data.name+')';
+              this.list[index].storeNumber = data.data.number;
+
               this.$forceUpdate();
             });
         })

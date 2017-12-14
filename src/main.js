@@ -18,12 +18,12 @@ Vue.prototype.$ajax = axios
 
 Vue.config.productionTip = false
 
-Vue.filter('formatDate', function (date, format) {
+Vue.filter('formatDate', function(date, format) {
   if (Object.prototype.toString.call(date) !== "[object Date]") {
     let now = new Date();
-    if(typeof date === 'number'){
-    	now.setTime(date);
-    	date = now;
+    if (typeof date === 'number') {
+      now.setTime(date);
+      date = now;
     }
   }
   var regexpObj = {
@@ -47,6 +47,15 @@ Vue.filter('formatDate', function (date, format) {
   return format;
 })
 
+Vue.mixin({
+  created: function () {
+    let path = this.$route.path;
+    if(!this.$store.state.customer.id && (path !="/login" && path != "register")){
+      this.$router.push({ path: '/login' })
+    }
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -55,3 +64,4 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
+
