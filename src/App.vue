@@ -10,6 +10,11 @@
 export default {
   name: 'app',
   created(){
+    this.$store.dispatch('FETCH_WEIXIN').then(()=>{
+
+    }).catch((e)=>{
+      console.log(e)
+    })
     this.$store.dispatch('FETCH_BRANDS');
     this.$store.dispatch('FETCH_LOGIN_CACHE');
     navigator.geolocation.getCurrentPosition((position) =>{

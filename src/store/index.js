@@ -50,6 +50,15 @@ export default new Vuex.Store({
     pageLoading: false,
   },
   actions: {
+    FETCH_WEIXIN: ({ commit, dispatch, state }) => {
+      return new Promise((resolve, reject) => {
+        fetch.getWeixinOpenId()
+          .then(data => {
+            resolve(data)
+            commit('SET_WEIXIN', data);
+          }).catch(reject);
+      })
+    },
     FETCH_SIGN: ({ commit, dispatch, state }, { data }) => {
       return new Promise((resolve, reject) => {
         fetch.sign(data)
@@ -254,6 +263,13 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    SET_WEIXIN: (state, { data }) => {
+      if (data.errorCode == SUCCESS) {
+        state.brands = data.data
+      } else {
+        state.brands = [];
+      }
+    },
     SET_CUSTOMER: (state, { data }) => {
       state.customer = data
     },

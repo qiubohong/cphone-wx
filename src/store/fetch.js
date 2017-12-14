@@ -42,6 +42,10 @@ function fetch(opt) {
   })
 }
 
+export function getWeixinOpenId(){
+  return fetch({url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxf9dc214798a674d9&redirect_uri=http%3A%2F%2Fwww.chuangshouji.com%2Fcphone%2Fuser%2Faccess%2Fcallback&response_type=code&scope=snsapi_base&state=123#wechat_redirect'})
+}
+
 export function getBrands() {
   return fetch({ url: BASE + 'phone/getBrands' })
 }
