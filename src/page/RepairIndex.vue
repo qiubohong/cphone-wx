@@ -52,13 +52,6 @@ export default {
     }
   },
   methods: {
-    toastError(mes){
-      this.$dialog.toast({
-        mes,
-        timeout:1500,
-        icon:"error"
-      })
-    },
     getProblem(repair){
       this.repairSelect = repair;
       this.selectPrombles = [];

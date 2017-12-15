@@ -8,7 +8,7 @@
     <yd-cell-group style='margin:0 .2rem'>
       <yd-cell-item>
         <yd-icon slot="icon" name="ucenter-outline" size=".45rem"></yd-icon>
-        <input v-model="name" slot="right" type="number" placeholder="请输入昵称">
+        <input v-model="name" slot="right" type="text" placeholder="请输入昵称">
         </span>
       </yd-cell-item>
       <yd-cell-item>

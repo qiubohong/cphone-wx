@@ -5,6 +5,9 @@
         <yd-navbar-back-icon></yd-navbar-back-icon>
       </router-link>
     </yd-navbar>
+    <div style="padding:1rem;text-align:center;" v-if="list.length === 0">
+      暂无订单，去下单吧！<yd-button @click.native="$router.push('/')">去首页</yd-button>
+    </div>
     <div class="order-box" v-for="item in list">
       <yd-flexbox class="order-title">
         <yd-flexbox-item>回收机型：{{item.recyclePhoneName}}</yd-flexbox-item>

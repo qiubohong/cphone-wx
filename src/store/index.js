@@ -31,7 +31,7 @@ export default new Vuex.Store({
     },
 
     customer: {},
-    wxOpenid: "123123123",
+    wxOpenid: -1,
 
     key: {
       recycleSelect: "RECYCLE_SELECT",
@@ -43,6 +43,7 @@ export default new Vuex.Store({
         latitude: "LATITUDE",
       },
       customer: "CUSTOMER",
+      wxOpenid: "WXOPENID",
     },
     code: {
       success: SUCCESS
@@ -50,14 +51,27 @@ export default new Vuex.Store({
     pageLoading: false,
   },
   actions: {
-    FETCH_WEIXIN: ({ commit, dispatch, state }) => {
+    FETCH_WEIXIN: ({ commit, dispatch, state },{code}) => {
       return new Promise((resolve, reject) => {
-        fetch.getWeixinOpenId()
+        fetch.getWxOpenId(code)
           .then(data => {
             resolve(data)
-            commit('SET_WEIXIN', data);
+            commit('SET_WEIXIN', {data});
           }).catch(reject);
       })
+    },
+    FETCH_WEIXIN_CACHE: ({ commit, dispatch, state }) => {
+      let data;
+      try{
+        console.log(state.key['wxOpenid'])
+        console.log(localStorage.getItem(state.key['wxOpenid']))
+        data = JSON.parse(localStorage.getItem(state.key['wxOpenid']));
+      }catch(e){
+        console.error(e);
+      }
+      console.log(data);
+      data = data || {};
+      commit('SET_WEIXIN', {data});
     },
     FETCH_SIGN: ({ commit, dispatch, state }, { data }) => {
       return new Promise((resolve, reject) => {
@@ -67,11 +81,20 @@ export default new Vuex.Store({
           }).catch(reject);
       })
     },
+    FETCH_ISSIGN: ({ commit, dispatch, state }) => {
+      return new Promise((resolve, reject) => {
+        fetch.isSign(state.wxOpenid)
+          .then(data => {
+            resolve(data)
+          }).catch(reject);
+      })
+    },
     FETCH_LOGIN: ({ commit, dispatch, state }, { data }) => {
       return new Promise((resolve, reject) => {
         fetch.login(data)
           .then(data => {
-            resolve(data)
+            resolve(data);
+
           }).catch(reject);
       })
     },
@@ -261,13 +284,41 @@ export default new Vuex.Store({
           }).catch(reject);
       })
     },
+    FETECH_PRIZE: ({ commit, dispatch, state }) => {
+      return new Promise((resolve, reject) => {
+        fetch.getCurPrize()
+          .then(data => {
+            resolve(data);
+          }).catch(reject);
+      })
+    },
+    FETECH_RAFFLES: ({ commit, dispatch, state }) => {
+      return new Promise((resolve, reject) => {
+        fetch.getCustomerRaffles(state.customer.number)
+          .then(data => {
+            resolve(data);
+          }).catch(reject);
+      })
+    },
+    FETCH_PRIZE_RECORD: ({ commit, dispatch, state }) => {
+      return new Promise((resolve, reject) => {
+        fetch.getAwardPrizes()
+          .then(data => {
+            resolve(data);
+          }).catch(reject);
+      })
+    },
+
   },
   mutations: {
     SET_WEIXIN: (state, { data }) => {
+      if(!data){
+        return;
+      }
       if (data.errorCode == SUCCESS) {
-        state.brands = data.data
+        state.wxOpenid = data.data
       } else {
-        state.brands = [];
+        state.wxOpenid = null;
       }
     },
     SET_CUSTOMER: (state, { data }) => {

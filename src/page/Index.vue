@@ -22,7 +22,7 @@
             <img slot="icon" src="/static/img/icon/a2.png">
             <span slot="text">手机维修</span>
         </yd-grids-item>
-        <yd-grids-item @click.native="noOpen">
+        <yd-grids-item link="userLuck">
             <img slot="icon" src="/static/img/icon/a3.png">
             <span slot="text">开奖中心</span>
         </yd-grids-item>

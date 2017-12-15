@@ -1,5 +1,5 @@
-// 引入 axios
-const BASE = 'http://www.chuangshouji.com/cphone/';
+const DOMAIN = 'http://www.chuangshouji.com/';
+const BASE = DOMAIN+'cphone/';
 
 function fetch(opt) {
   opt = Object.assign({
@@ -40,10 +40,6 @@ function fetch(opt) {
       obj.send();
     }
   })
-}
-
-export function getWeixinOpenId(){
-  return fetch({url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxf9dc214798a674d9&redirect_uri=http%3A%2F%2Fwww.chuangshouji.com%2Fcphone%2Fuser%2Faccess%2Fcallback&response_type=code&scope=snsapi_base&state=123#wechat_redirect'})
 }
 
 export function getBrands() {
@@ -109,6 +105,17 @@ export function getRepairOrderList(customerId) {
 export function cacnleRepairOrder(orderSn,customerId) {
   return fetch({ url: BASE + `maintain/order/cacnleOrder/${orderSn}/${customerId}`, data:{orderSn,customerId}})
 }
+//抽奖
+export function getCurPrize(){
+  return fetch({ url: DOMAIN + `CPhoneRaffle/rafflePrize/getCurPrize`})
+}
+export function getCustomerRaffles(customerPhone){
+  return fetch({ url: DOMAIN + `CPhoneRaffle/raffle/getCustomerRaffles`, data:{customerPhone}})
+}
+export function  getAwardPrizes(){
+  return fetch({ url: DOMAIN + `CPhoneRaffle/rafflePrize/getAwardPrizes`})
+}
+
 //通用
 export function getStore(lat,lng) {
   return fetch({ url: BASE + `storeinfo/nearlist/${lat}/${lng}`})
@@ -119,6 +126,9 @@ export function getStoreById(storeId) {
 }
 
 //登录注册
+export function getWxOpenId(code){
+  return fetch({url: BASE + 'user/access/callback', data:{code,state:"123"}})
+}
 export function login(data) {
   return fetch({ url: BASE + `user/customer/login`,data})
 }
@@ -127,4 +137,7 @@ export function sign(data) {
 }
 export function sendSignCode(number) {
   return fetch({ url: BASE + `user/sendSignCode/${number}`})
+}
+export function isSign(openid){
+  return fetch({ url: BASE + `user/customer/${openid}`})
 }
