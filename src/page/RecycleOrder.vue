@@ -30,18 +30,21 @@
         </yd-flexbox-item>
         <div style="color:#f00;padding-right:.2rem" v-if="item.status == 5">订单已取消</div>
       </yd-flexbox>
-      <yd-step :current="item.status" v-if="item.status != 5">
+      <yd-step :current="item.status + 1" v-if="item.status != 5">
         <yd-step-item>
           <span slot="bottom">订单提交</span>
+        </yd-step-item>
+        <yd-step-item>
+          <span slot="bottom">待受理</span>
         </yd-step-item>
         <yd-step-item>
           <span slot="bottom">订单受理</span>
         </yd-step-item>
         <yd-step-item>
-          <span slot="bottom">工程师出发</span>
+          <span slot="bottom">服务完成</span>
         </yd-step-item>
         <yd-step-item>
-          <span slot="bottom">回收完成</span>
+          <span slot="bottom">确认完成</span>
         </yd-step-item>
       </yd-step>
       <div class="order-footer" v-if="item.status < 4">
