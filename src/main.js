@@ -109,12 +109,14 @@ let isLogin = throttle(function() {
 }, 500);
 
 Vue.mixin({
-  created: function() {
-    this.$store.dispatch('FETCH_LOGIN_CACHE');
-    //判断是否登录
-    isLogin.call(this);
-    //每跳一个页面 更新地理位置
-    getPosition.call(this);
+  created() {
+    if(this.$store){
+      this.$store.dispatch('FETCH_LOGIN_CACHE');
+      //判断是否登录
+      isLogin.call(this);
+      //每跳一个页面 更新地理位置
+      getPosition.call(this);
+    }
   },
   methods: {
     toastError(mes) {

@@ -6,7 +6,7 @@
       </router-link>
     </yd-navbar>
     <yd-accordion accordion>
-      <yd-accordion-item v-for="(item,index) in problems" :title="item.problemName + ': '+selects[index]" :open="index == 0">
+      <yd-accordion-item v-for="(item,index) in problems" :title="item.problemName + ': '+(selects[index] || '')" :open="index == 0">
         <div style="padding: .24rem;">
           <yd-radio-group v-model="selects[index]" >
             <yd-radio :val="option.problemItem" v-for='option in item.selects'>
@@ -206,12 +206,6 @@ export default {
     },
     problems() {
       const ps = this.$store.state.repairProblems;
-      ps.forEach((item) => {
-        this.selects.push("")
-        if (item.selects.length == 1) {
-          this.selects.push(item.selects[0].problemItem);
-        }
-      })
       return ps;
     },
     position() {
@@ -229,13 +223,10 @@ export default {
           this.problems[index].selects.forEach((item2) => {
           if (item2.problemItem == item) {
             this.money += (~~item2.cost);
-            this.formData.problemSelects.push({
-              ...item2
-            })
+            this.formData.problemSelects[index] = {...item2};
           }
         })
         }
-        
       })
     },
     storeIndex(val) {
@@ -323,14 +314,15 @@ export default {
     },
     submitForm: function() {
       let formData =this.formData;
+      console.log(JSON.stringify(formData));
       this.$dialog.loading.open();
       this.$store.dispatch('FETCH_REPAIR_ORDER',{formData})
         .then((data) => {
           this.$dialog.loading.close();
-          if (data.errorCode = this.$store.state.code["success"]) {
+          if (data.errorCode == this.$store.state.code["success"]) {
             this.$router.push("/formSuccess/repairIndex");
           } else {
-            toastError(data.errorInfo);
+            this.toastError(data.errorInfo);
           }
         }).catch(() => this.toastError('网络错误，请稍后重试！'))
     },
