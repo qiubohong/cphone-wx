@@ -106,6 +106,7 @@ export default {
         this.$dialog.loading.close();
         if (res && res.status == 1) {
           //2 调用微信支付的内置接口
+          console.log('微信支付')
           wxPay(res.appId, res.timeStamp, res.nonceStr, res.package, res.signType, res.paySign).then((wxRes) => {
             this.$dialog.loading.open('完成支付，请求订单状态...');
             //3 完成微信支付，调用完成订单接口

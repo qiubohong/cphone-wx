@@ -68,7 +68,7 @@ export function throttle(func, wait, options) {
 }
 
 //微信支付
-function wxPay(appId, timeStamp, nonceStr, package2, signType, paySign) {
+export function wxPay(appId, timeStamp, nonceStr, package2, signType, paySign) {
   return new Promise((resolve, reject) => {
     if(typeof WeixinJSBridge == 'undefined'){
       reject("请在微信端开启支付！")
