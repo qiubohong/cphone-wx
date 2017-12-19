@@ -6,7 +6,8 @@
       </router-link>
     </yd-navbar>
     <div style="padding:1rem;text-align:center;" v-if="list.length === 0">
-      暂无订单，去下单吧！<yd-button @click.native="$router.push('/')">去首页</yd-button>
+      暂无订单，去下单吧！
+      <yd-button @click.native="$router.push('/')">去首页</yd-button>
     </div>
     <div class="order-box" v-for="item in list">
       <yd-flexbox class="order-title">
@@ -48,13 +49,16 @@
         </yd-step-item>
       </yd-step>
       <div class="order-footer">
-        <yd-button type="primary" v-if="item.status == 3">支付订单</yd-button>
+        <yd-button type="primary" v-if="item.status == 3" @click.native="payOrder(item.serialNumber)">支付订单</yd-button>
         <yd-button type="danger" v-if="item.status < 3" @click.native="cancleOrder(item.serialNumber)">取消订单</yd-button>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { payOrder, confirmFinishRepairOrder } from '../store/fetch'
+import { wxPay } from '../utils/index'
+
 export default {
   name: 'recoverOrder',
   created() {
@@ -86,6 +90,53 @@ export default {
     }
   },
   methods: {
+    payOrder(orderSn) {
+      this.$dialog.confirm({
+        title: '创手机-提示您',
+        mes: '确定手机已经维修好了？点击确定支付！',
+        opts: () => {
+          this.goPay(orderSn);
+        }
+      });
+    },
+    goPay(orderSn) {
+      this.$dialog.loading.open('正在启动支付...');
+      //1 获取请求微信支付的参数
+      payOrder(orderSn).then((res) => {
+        this.$dialog.loading.close();
+        if (res && res.status == 1) {
+          //2 调用微信支付的内置接口
+          wxPay(res.appId, res.timeStamp, res.nonceStr, res.package, res.signType, res.paySign).then((wxRes) => {
+            this.$dialog.loading.open('完成支付，请求订单状态...');
+            //3 完成微信支付，调用完成订单接口
+            confirmFinishRepairOrder(orderSn).then((data) => {
+              this.$dialog.loading.close();
+              if (data.data && data.errorCode === this.$store.state.code['success']) {
+                this.$dialog.alert({
+                  mes: "支付成功，订单完成！",
+                  callback: () => {
+                    this.getOrderList();
+                  }
+                });
+              } else {
+                this.toastError(data.errorInfo);
+              }
+            }).catch((e) => {
+              console.log(e)
+              this.toastError('网络异常，请稍后重试！')
+            });
+            //微信支付错误提示
+          }).catch((msg) => this.toastError(msg));
+        } else {
+          this.toastError(res.msg);
+        }
+      }).catch((e) => {
+        //请求微信支付参数错误提示
+        console.log(e)
+        this.toastError('网络异常，请稍后重试！')
+      });
+    },
+
     cancleOrder(orderSn) {
       this.$dialog.confirm({
         title: '创手机-提示您',

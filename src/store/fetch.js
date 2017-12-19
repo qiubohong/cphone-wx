@@ -82,6 +82,10 @@ export function cacnleRecycleOrder(orderSn,customerId) {
   return fetch({ url: BASE + `recycle/order/cacnleOrder/${orderSn}/${customerId}`, data:{orderSn,customerId}})
 }
 
+export function confirmFinishRecycleOrder(serialNumber) {
+  return fetch({ url: BASE + `recycle/order/confirmFinish/${serialNumber}`})
+}
+
 //维修
 export function getMaintainPhones() {
   return fetch({ url: BASE + `maintain/getMaintainPhones`})
@@ -105,6 +109,14 @@ export function getRepairOrderList(customerId) {
 export function cacnleRepairOrder(orderSn,customerId) {
   return fetch({ url: BASE + `maintain/order/cacnleOrder/${orderSn}/${customerId}`, data:{orderSn,customerId}})
 }
+
+export function payOrder(serialNumber){
+  return fetch({ url: DOMAIN + `CPhoneRaffle/WeixinPay/maintainPay`, data:{serialNumber}})
+}
+export function confirmFinishRepairOrder(serialNumber) {
+  return fetch({ url: BASE + `maintain/order/confirmFinish/${serialNumber}`})
+}
+
 //抽奖
 export function getCurPrize(){
   return fetch({ url: DOMAIN + `CPhoneRaffle/rafflePrize/getCurPrize`})
