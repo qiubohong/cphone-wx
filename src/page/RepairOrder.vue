@@ -175,7 +175,7 @@ export default {
                   this.$forceUpdate();
                 });
             }
-            //如果不是门店维修
+            //如果是门店维修
             if (item.storeId) {
               if (this.stores[item.storeId]) {
                 this.list[index].storeName = this.stores[item.storeId].address + '(' + this.stores[item.storeId].name + ')';

@@ -38,7 +38,7 @@
               <span class="list-price"><em>¥</em>{{item.totalPrice}}</span>
             </div>
             <div slot="other">
-               <yd-button size="large" type="primary">立即购买</yd-button>
+               <yd-button size="large" type="primary">立即回收</yd-button>
             </div>
         </yd-list-item>
     </yd-list>

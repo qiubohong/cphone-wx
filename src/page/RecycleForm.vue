@@ -226,6 +226,7 @@ export default {
       if (!check) {
         return;
       }
+      console.log(this.formData)
       this.$dialog.loading.open("提交中...");
       this.$store.dispatch('FETCH_RECYCLE_ORDER',{formData:this.formData})
         .then((data) => {
@@ -256,10 +257,10 @@ export default {
           this.$store.commit('SET_STORE',{data:data.data})
           this.storeShow = true;
         }else{
-          toastError(data.errorInfo)
+          this.toastError(data.errorInfo)
         }
       }).catch(() => {
-        toastError('网络错误请稍后重试！');
+        this.toastError('网络错误请稍后重试！');
       })
     },
     cancelStore() {

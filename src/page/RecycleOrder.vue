@@ -144,13 +144,15 @@ export default {
               this.list[index].recyclePhoneName = data.data.name;
               this.$forceUpdate();
             });
-          this.$store.dispatch('FETECH_STORE_ID', { storeId: item.storeId })
+          if(item.storeId){
+            this.$store.dispatch('FETECH_STORE_ID', { storeId: item.storeId })
             .then((data) => {
               this.list[index].storeName = data.data.address + '(' + data.data.name + ')';
               this.list[index].storeNumber = data.data.number;
 
               this.$forceUpdate();
             });
+          }
         })
       });
     }
