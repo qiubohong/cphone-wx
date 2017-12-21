@@ -14,9 +14,8 @@
           </yd-cell-item>
 
           <yd-cell-item v-if='ques.problemType === 1' v-for="option in ques.selects">
-            <span slot="right">{{ques.checked}}</span>
             <yd-checkbox-group slot="left" v-model="ques.checked">
-              <yd-checkbox :val="option.id" shape="circle" style="display:block;width:8rem;padding:.2rem 0;border-bottom:1px solid #ececec">{{option.problemItem}}</yd-checkbox>
+              <yd-checkbox :val="option.id" shape="circle" style="display:block;width:8rem;padding:.2rem 0;">{{option.problemItem}}</yd-checkbox>
             </yd-checkbox-group>
           </yd-cell-item>
       </yd-cell-group>
