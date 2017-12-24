@@ -141,14 +141,18 @@
 </template>
 <script>
 import District from 'ydui-district/dist/gov_province_city_area_id';
-import { formateDate } from '../utils/index'
+import {formateDate,isLogin, goLogin} from '../utils/index'
 
 export default {
   name: 'repairForm',
   created() {
-    if (!this.$store.state.recycleSelect.name) {
-      this.$store.dispatch('FETCH_SELECT_REPAIR');
-      this.$store.dispatch("FETCH_POSITION");
+    if (isLogin(this.$store)) {
+      if (!this.$store.state.recycleSelect.name) {
+        this.$store.dispatch('FETCH_SELECT_REPAIR');
+        this.$store.dispatch("FETCH_POSITION");
+      }
+    }else{
+      goLogin.call(this, window.location.href);
     }
   },
   data() {

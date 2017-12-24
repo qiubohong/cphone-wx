@@ -57,13 +57,15 @@
 </template>
 <script>
 import { payOrder, confirmFinishRepairOrder } from '../store/fetch'
-import { wxPay } from '../utils/index'
+import { wxPay, goLogin, isLogin } from '../utils/index'
 
 export default {
   name: 'recoverOrder',
   created() {
-    if (this.$store.state.customer.id) {
+    if (isLogin(this.$store)) {
       this.getOrderList();
+    }else{
+      goLogin.call(this, window.location.href);
     }
   },
   data() {

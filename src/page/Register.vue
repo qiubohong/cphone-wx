@@ -82,16 +82,9 @@ export default {
           })
           this.code = true;
         }else{
-          toastError(data.errorInfo);
+          this.toastError(data.errorInfo);
         }
-      }).catch(()=>toastError('网络错误请稍后重试'));
-    },
-    toastError(mes){
-            this.$dialog.toast({
-            mes:mes,
-            timeout:1500,
-            icon:"error",
-          })
+      }).catch(()=>this.toastError('网络错误请稍后重试'));
     },
     check(){
       if(this.name == ""){
@@ -133,7 +126,13 @@ export default {
               timeout:1500,
               icon:"success",
             });
-            this.$router.push("/login");
+            
+            localStorage.setItem(this.$store.state.key["customer"], JSON.stringify(data.data));
+            this.$store.dispatch('FETCH_LOGIN_CACHE');
+            setTimeout(function() {
+              var url = localStorage.getItem("returnUrl") || "/";
+              location.href = url;
+            }, 10);
           }else{
             this.$dialog.toast({
             mes:data.errorInfo,

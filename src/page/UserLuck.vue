@@ -63,12 +63,18 @@
   </div>
 </template>
 <script>
+import {isLogin, goLogin} from '../utils/index'
 export default {
   name: 'userLuck',
   created() {
-    this.getPrize();
-    this.getRaffles();
-    this.gerRecords();
+    //如果没登录就跳转到登陆界面
+    if(!isLogin(this.$store)){
+      goLogin.call(this, window.location.href);
+    }else{
+      this.getPrize();
+      this.getRaffles();
+      this.gerRecords();
+    }
   },
   mounted() {
     this.interval = setInterval(() => {

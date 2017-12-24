@@ -63,13 +63,10 @@ export default new Vuex.Store({
     FETCH_WEIXIN_CACHE: ({ commit, dispatch, state }) => {
       let data;
       try{
-        console.log(state.key['wxOpenid'])
-        console.log(localStorage.getItem(state.key['wxOpenid']))
         data = JSON.parse(localStorage.getItem(state.key['wxOpenid']));
       }catch(e){
         console.error(e);
       }
-      console.log(data);
       data = data || {};
       commit('SET_WEIXIN', {data});
     },
@@ -264,8 +261,8 @@ export default new Vuex.Store({
     },
     //通用
     FETCH_POSITION: ({ commit, dispatch, state }) => {
-      let longitude = localStorage.getItem(state.key.position.longitude);
-      let latitude = localStorage.getItem(state.key.position.latitude);
+      let longitude = sessionStorage.getItem(state.key.position.longitude);
+      let latitude = sessionStorage.getItem(state.key.position.latitude);
       commit('SET_POSITION', { longitude, latitude });
     },
     FETECH_STORE: ({ commit, dispatch, state }, { latitude, longitude }) => {

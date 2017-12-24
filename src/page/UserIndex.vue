@@ -44,10 +44,14 @@
 </template>
 
 <script>
+import {isLogin, goLogin} from '../utils/index'
 export default {
   name: 'userIndex',
   created(){
-
+    //如果没登录就跳转到登陆界面
+    if(!isLogin(this.$store)){
+      goLogin.call(this, window.location.href);
+    }
   },
   data () {
     return {

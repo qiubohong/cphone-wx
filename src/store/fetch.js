@@ -1,7 +1,7 @@
 const DOMAIN = 'http://www.chuangshouji.com/';
 const BASE = DOMAIN+'cphone/';
 
-function fetch(opt) {
+export function fetch(opt) {
   opt = Object.assign({
     method: 'get',
     type: 'json'

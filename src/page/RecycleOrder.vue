@@ -58,13 +58,16 @@
   </div>
 </template>
 <script>
+import {isLogin, goLogin} from '../utils/index'
 import { confirmFinishRecycleOrder } from '../store/fetch'
 
 export default {
   name: 'recycleOrder',
   created() {
-    if (this.$store.state.customer.id) {
+    if (isLogin(this.$store)) {
       this.getOrderList();
+    }else{
+      goLogin.call(this, window.location.href);
     }
   },
   data() {

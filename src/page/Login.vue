@@ -69,14 +69,17 @@ export default {
         .then(data => {
           this.$dialog.loading.close();
           if (this.$store.state.code["success"] == data.errorCode) {
-            localStorage.setItem(this.$store.state.key["customer"], JSON.stringify(data.data));
             this.$dialog.toast({
               mes: "登录成功",
               timeout: 1500,
               icon: "success",
             });
+            localStorage.setItem(this.$store.state.key["customer"], JSON.stringify(data.data));
             this.$store.dispatch('FETCH_LOGIN_CACHE');
-            this.$router.push("/");
+            setTimeout(function() {
+              var url = localStorage.getItem("returnUrl") || "/";
+              location.href = url;
+            }, 10);
           } else {
             this.$dialog.toast({
               mes: data.errorInfo,
