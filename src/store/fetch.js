@@ -133,6 +133,10 @@ export function getStore(lat,lng) {
   return fetch({ url: BASE + `storeinfo/nearlist/${lat}/${lng}`})
 }
 
+export function getAddreessByPosition(lat,lng){
+  return fetch({ url: BASE + `user/getAddreessByPosition/${lat}/${lng}`})
+}
+
 export function getStoreById(storeId) {
   return fetch({ url: BASE + `storeinfo/storeInfo/${storeId}`})
 }

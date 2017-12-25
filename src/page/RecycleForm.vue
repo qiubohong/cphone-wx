@@ -28,7 +28,7 @@
       <template v-if='formData.serviceType == 1'>
         <yd-cell-item arrow>
           <span slot="left">所在地区：</span>
-          <input slot="right" type="text" @click.stop="cityShow = true" v-model="cityModel" readonly placeholder="请选择省市">
+          <input slot="right" type="text" @click.stop="cityShow = true" v-model="cityModel" readonly :placeholder="placeholder">
         </yd-cell-item>
         <yd-cell-item>
           <span slot="left">详细地址：</span>
@@ -69,8 +69,10 @@
     <div style="margin: 0 .2rem">
       <yd-button size="large" type="danger" @click.native="backQues">重新评估</yd-button>
     </div>
-    
-    <yd-cityselect :provance="cityProps.provance" v-model="cityShow" :done="cityResult" :items="district"></yd-cityselect>
+
+    <yd-cityselect :provance="provance"
+                :city="city"
+                v-model="cityShow" :done="cityResult" :items="district" ref="cityselectDemo"></yd-cityselect>
 
     <yd-popup v-model="storeShow" position="bottom" height="95%">
       <yd-flexbox style="margin: .2rem;">
@@ -96,7 +98,8 @@
 </template>
 <script>
 import District from 'ydui-district/dist/gov_province_city_area_id';
-import {formateDate,isLogin, goLogin} from '../utils/index'
+import { formateDate, isLogin, goLogin } from '../utils/index'
+import {getAddreessByPosition} from '../store/fetch'
 
 export default {
   name: 'recoverForm',
@@ -107,7 +110,7 @@ export default {
         this.$store.dispatch("FETCH_RECCYLE_RESULT");
         this.$store.dispatch("FETCH_POSITION");
       }
-    }else{
+    } else {
       goLogin.call(this, window.location.href);
     }
   },
@@ -121,9 +124,9 @@ export default {
       startDate: startDate,
       endDate: endDate,
       cityShow: false,
-      cityProps: {
-        provance: "湖南省"
-      },
+      provance: "",
+      city: "",
+
       storeShow: false,
       formData: {
         "recyclePhoneId": 0,
@@ -152,12 +155,14 @@ export default {
       district: District,
       checkedAddress: '',
       storeIndex: -1,
-      selectStore:{},
+      selectStore: {},
+
+      placeholder: "请选择省市"
     }
   },
-  watch:{
-    storeIndex(val){
-      if(val != -1){
+  watch: {
+    storeIndex(val) {
+      if (val != -1) {
         this.selectStore = this.stores[val];
         this.checkedAddress = this.stores[val].address;
       }
@@ -177,9 +182,10 @@ export default {
       return this.$store.state.recycleResult;
     },
     position() {
+      console.log("position")
       return this.$store.state.position;
     },
-    stores(){
+    stores() {
       return this.$store.state.stores;
     }
   },
@@ -222,7 +228,7 @@ export default {
     submitForm() {
       this.formData.address = this.cityModel + this.address;
       this.formData.positon = this.position.latitude + "," + this.position.longitude;
-      if(this.selectStore.id){
+      if (this.selectStore.id) {
         this.formData.storeId = this.selectStore.id;
       }
       let check = this.checkForm();
@@ -231,7 +237,7 @@ export default {
       }
       console.log(this.formData)
       this.$dialog.loading.open("提交中...");
-      this.$store.dispatch('FETCH_RECYCLE_ORDER',{formData:this.formData})
+      this.$store.dispatch('FETCH_RECYCLE_ORDER', { formData: this.formData })
         .then((data) => {
           this.$dialog.loading.close();
           if (this.$store.state.code["success"] == data.errorCode) {
@@ -256,10 +262,10 @@ export default {
       let latitude = (~~this.position.latitude).toFixed(6);
       this.$store.dispatch('FETECH_STORE', { latitude, longitude }).then((data) => {
         this.$dialog.loading.close();
-        if(this.$store.state.code["success"] === data.errorCode){
-          this.$store.commit('SET_STORE',{data:data.data})
+        if (this.$store.state.code["success"] === data.errorCode) {
+          this.$store.commit('SET_STORE', { data: data.data })
           this.storeShow = true;
-        }else{
+        } else {
           this.toastError(data.errorInfo)
         }
       }).catch(() => {
@@ -269,9 +275,30 @@ export default {
     cancelStore() {
       this.storeShow = false;
       this.checkedAddress = "";
+    },
+    getAddreessByPos() {
+      let { longitude, latitude } = this.$store.state.position;
+      if (longitude != 113) {
+        this.placeholder = "正在定位";
+        getAddreessByPosition(latitude, longitude).then((res) => {
+          if (this.$store.state.code["success"] == res.errorCode) {
+            this.provance = res.data.province;
+            this.city = res.data.city;
+            this.cityModel = res.data.adress;
+            //this.$forceUpdate();
+          } else {
+            this.toastError(res.errorInfo)
+          }
+        }).catch((e) => {
+          console.log(e)
+          this.toastError('网络错误请稍后重试！');
+        })
+      }
     }
+  },
+  mounted() {
+    this.getAddreessByPos();
   }
-
 }
 
 </script>

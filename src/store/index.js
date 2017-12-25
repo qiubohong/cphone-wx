@@ -261,8 +261,8 @@ export default new Vuex.Store({
     },
     //通用
     FETCH_POSITION: ({ commit, dispatch, state }) => {
-      let longitude = sessionStorage.getItem(state.key.position.longitude);
-      let latitude = sessionStorage.getItem(state.key.position.latitude);
+      let longitude = localStorage.getItem(state.key.position.longitude);
+      let latitude = localStorage.getItem(state.key.position.latitude);
       commit('SET_POSITION', { longitude, latitude });
     },
     FETECH_STORE: ({ commit, dispatch, state }, { latitude, longitude }) => {

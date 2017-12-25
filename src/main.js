@@ -51,7 +51,7 @@ let getPosition = throttle(function() {
 var getOpenId = false;
 let isWxOpenId = throttle(function() {
   if(getOpenId) return;
-  getOpenId = false;
+  getOpenId = true;
   let path = this.$route.path;
   if(path == '/login' || path == '/register'){
     return;
@@ -63,7 +63,7 @@ let isWxOpenId = throttle(function() {
 
   setTimeout(function() {
     getOpenId = false;
-  }, 1000);
+  }, 2000);
 }, 500);
 
 Vue.mixin({

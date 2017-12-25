@@ -1,5 +1,7 @@
 import { fetch } from '../store/fetch'
 
+const MAPAK = "vQnjUfpiKMZ9pLTxa34asEx1Y57VRWDS";
+
 /**
  * 日期转换
  * @param  {[type]} date   [description]
@@ -198,7 +200,7 @@ export function getLocalPosition() {
   var ua = window.navigator.userAgent.toLowerCase();
   if (ua.match(/MicroMessenger/i) == 'micromessenger') {
     fetch({
-      url: "/cphone/storeinfo/jsapiSign/"+encodeURIComponent(encodeURIComponent(location.href.split("#")[0])),
+      url: "/cphone/storeinfo/jsapiSign?url="+encodeURIComponent(encodeURIComponent(location.href.split("#")[0])),
     }).then((data) => {
       wx.config({
         debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
@@ -226,7 +228,7 @@ export function getLocalPosition() {
     })
   } else {
     navigator.geolocation.getCurrentPosition((position) => {
-      console.log("经度:" + position.coords.longitude)
+      console.log("经纬度:" + position.coords.latitude+","+position.coords.longitude)
       let longitude = position.coords.longitude;
       let latitude = position.coords.latitude;
       localStorage.setItem(this.$store.state.key.position.longitude, longitude);
