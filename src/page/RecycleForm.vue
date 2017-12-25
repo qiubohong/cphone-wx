@@ -32,20 +32,21 @@
         </yd-cell-item>
         <yd-cell-item>
           <span slot="left">详细地址：</span>
-          <input v-model="address" slot="right" type="tel" placeholder="请输入详细地址">
+          <input v-model="address" slot="right" type="text" placeholder="请输入详细地址">
         </yd-cell-item>
         <yd-cell-item>
           <span slot="left">预约时间：</span>
-          <yd-datetime :start-date="startDate" :end-date="endDate" type="datetime" v-model="formData.period" slot="right"></yd-datetime>
+          <yd-datetime
+              :start-date="startDate" 
+              :end-date="endDate" 
+              start-hour="9"
+              end-hour="22"
+              type="datetime" v-model="formData.period" slot="right"></yd-datetime>
         </yd-cell-item>
       </template>
       <template v-if='formData.serviceType == 2'>
         <yd-cell-item arrow @click.native="getStore">
           <span slot="left">{{checkedAddress == '' ? '请选择门店' : checkedAddress}}</span>
-        </yd-cell-item>
-        <yd-cell-item>
-          <span slot="left">预约时间：</span>
-          <yd-datetime :start-date="startDate" :end-date="endDate" type="datetime" v-model="formData.period" slot="right"></yd-datetime>
         </yd-cell-item>
       </template>
       <template v-if='formData.serviceType == 3'>

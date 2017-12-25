@@ -34,24 +34,25 @@
       <template v-if='formData.serviceType == 1'>
         <yd-cell-item arrow>
           <span slot="left">所在地区：</span>
-          <input slot="right" type="text" @click.stop="cityShow = true" v-model="cityModel" readonly placeholder="请选择省市">
+          <input slot="right" type="text" @click.stop="cityShow = true" v-model="cityModel" readonly :placeholder="placeholder">
         </yd-cell-item>
         <yd-cell-item>
           <span slot="left">详细地址：</span>
-          <input v-model="address" slot="right" type="tel" placeholder="请输入详细地址">
+          <input v-model="address" slot="right" type="text" placeholder="请输入详细地址">
         </yd-cell-item>
         <yd-cell-item>
           <span slot="left">预约时间：</span>
-          <yd-datetime :start-date="startDate" :end-date="endDate" type="datetime" v-model="formData.period" slot="right"></yd-datetime>
+          <yd-datetime 
+              :start-date="startDate" 
+              :end-date="endDate" 
+              start-hour="9"
+              end-hour="22"
+              type="datetime" v-model="formData.period" slot="right"></yd-datetime>
         </yd-cell-item>
       </template>
       <template v-if='formData.serviceType == 2'>
         <yd-cell-item arrow @click.native="getStore">
           <span slot="left">{{checkedAddress == '' ? '请选择门店' : checkedAddress}}</span>
-        </yd-cell-item>
-        <yd-cell-item>
-          <span slot="left">预约时间：</span>
-          <yd-datetime :start-date="startDate" :end-date="endDate" type="datetime" v-model="formData.period" slot="right"></yd-datetime>
         </yd-cell-item>
       </template>
       <template v-if='formData.serviceType == 3'>
@@ -73,7 +74,9 @@
       <yd-button size="large" type="primary" @click.native="confirm">提交</yd-button>
     </div>
     <!-- 城市选择 -->
-    <yd-cityselect :provance="cityProps.provance" v-model="cityShow" :done="cityResult" :items="district"></yd-cityselect>
+    <yd-cityselect :provance="provance" 
+                   :city="city"
+      v-model="cityShow" :done="cityResult" :items="district"></yd-cityselect>
     <!-- 确认框 -->
     <yd-popup v-model="confirmShow" position="bottom" height="auto" style="padding:.2rem;">
       <yd-cell-group style="margin-top:.2rem">
@@ -140,6 +143,7 @@
   </div>
 </template>
 <script>
+import {getAddreessByPosition} from '../store/fetch'
 import District from 'ydui-district/dist/gov_province_city_area_id';
 import {formateDate,isLogin, goLogin} from '../utils/index'
 
@@ -157,7 +161,6 @@ export default {
   },
   data() {
     let now = new Date();
-    now.setDate(now.getDate() + 1);
     let startDate = formateDate(now, "yyyy-MM-dd hh:mm");
     now.setDate(now.getDate() + 7);
     let endDate = formateDate(now, "yyyy-MM-dd hh:mm");
@@ -181,11 +184,11 @@ export default {
       },
       //城市控制器
       cityShow: false,
-      cityProps: {
-        provance: "湖南省"
-      },
+      provance: "",
+      city: "",
       address: "",
       cityModel: '',
+      placeholder:"请选择省市",
 
       //门店控制器
       storeShow: false,
@@ -340,9 +343,30 @@ export default {
             toastError(data.errorInfo);
           }
         }).catch(() => this.toastError('网络错误，请稍后重试！'))
+    },
+    getAddreessByPos() {
+      let { longitude, latitude } = this.$store.state.position;
+      if (longitude != 113) {
+        this.placeholder = "正在定位";
+        getAddreessByPosition(latitude, longitude).then((res) => {
+          if (this.$store.state.code["success"] == res.errorCode) {
+            this.provance = res.data.province;
+            this.city = res.data.city;
+            this.cityModel = res.data.adress;
+            //this.$forceUpdate();
+          } else {
+            this.toastError(res.errorInfo)
+          }
+        }).catch((e) => {
+          console.log(e)
+          this.toastError('网络错误请稍后重试！');
+        })
+      }
     }
+  },
+  mounted() {
+    this.getAddreessByPos();
   }
-
 }
 
 </script>

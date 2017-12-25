@@ -1,30 +1,30 @@
 <template>
   <div class="index">
-     <yd-navbar title="手机回收">
+     <yd-navbar title="上门·快修·回收">
        <router-link to="userIndex" slot="right">
             <yd-icon name="ucenter-outline" size="25px" color="#777"></yd-icon>
         </router-link>
      </yd-navbar>
      <yd-slider autoplay="3000">
         <yd-slider-item>
-            <img src="/static/img/banner/1.jpg">
+            <img src="http://www.chuangshouji.com:8089/phone/1514203312740.1.jpg">
         </yd-slider-item>
         <yd-slider-item>
-            <img src="/static/img/banner/2.jpg">
+            <img src="http://www.chuangshouji.com:8089/phone/1514203347268.2.jpg">
         </yd-slider-item>
     </yd-slider>
-    <yd-grids-group :rows="3">
+    <yd-grids-group :rows="4" item-height="2rem" style="border-top:1px solid #ececec">
         <yd-grids-item link="recycleIndex">
-            <img slot="icon" src="/static/img/icon/a1.png">
-            <span slot="text">手机回收</span>
+            <img slot="icon" style="height:1.2rem" src="/static/img/icon/a1.jpg">
         </yd-grids-item>
         <yd-grids-item link="repairIndex">
-            <img slot="icon" src="/static/img/icon/a2.png">
-            <span slot="text">手机维修</span>
+            <img slot="icon" style="height:1.2rem" src="/static/img/icon/a2.jpg">
         </yd-grids-item>
         <yd-grids-item link="userLuck">
-            <img slot="icon" src="/static/img/icon/a3.png">
-            <span slot="text">开奖中心</span>
+            <img slot="icon" style="height:1.2rem" src="/static/img/icon/a3.jpg">
+        </yd-grids-item>
+        <yd-grids-item>
+            <img @click="goTel" slot="icon" style="height:1.2rem" src="/static/img/icon/a4.jpg">
         </yd-grids-item>
     </yd-grids-group>
     <div class="index-title">
@@ -77,6 +77,9 @@ export default {
         title: '手机回收提示您',
         mes: '该功能正在开发中...',
       });
+    },
+    goTel(){
+      window.location.href = "tel:4006465400"
     }
   }
 

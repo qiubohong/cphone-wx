@@ -211,11 +211,11 @@ export function getLocalPosition() {
         signature: data.signature, // 必填，签名，见附录1
         jsApiList: ['getLocation'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
       });
-      wx.ready(function() {
+      wx.ready(() =>{
         wx.getLocation({
           type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-          success: function(res) {
-            console.log("经度:" + res.longitude)
+          success: (res) => {
+            console.log("经纬度:" + res.latitude+","+res.longitude)
             var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
             var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
             localStorage.setItem(this.$store.state.key.position.longitude, longitude);
