@@ -143,7 +143,7 @@ export default {
     cancleOrder(orderSn) {
       this.$dialog.confirm({
         title: '创手机-提示您',
-        mes: '是否删除该订单？',
+        mes: '是否取消该订单？',
         opts: () => {
           this.$dialog.loading.open();
           let customerId = this.customer.id;
