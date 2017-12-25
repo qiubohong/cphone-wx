@@ -7,7 +7,7 @@
      </yd-navbar>
      <yd-slider autoplay="3000">
         <yd-slider-item>
-            <img src="/static/img/banner/1.png">
+            <img src="/static/img/banner/1.jpg">
         </yd-slider-item>
         <yd-slider-item>
             <img src="/static/img/banner/2.jpg">
