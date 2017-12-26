@@ -71,13 +71,16 @@ export default {
       for(let val of this.problems){
         if(val.problemType === 1){
           if(val.checked.length === 0){
+            /*
+            *去掉多选 不一定要选 20171226 
+            * 
             this.$dialog.toast({
               mes: '请选完“'+val.problemName+'”选项！',
               icon: 'error',
               callback: () => {}
             });
             flag = true;
-          break;
+            break;*/
           }else{
             answers.push({
               problemId:val.id,

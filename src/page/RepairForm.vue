@@ -26,7 +26,7 @@
         <div slot="right">
           <yd-radio-group v-model="formData.serviceType">
             <yd-radio val="1">上门</yd-radio>
-            <yd-radio val="2">门店</yd-radio>
+            <yd-radio val="2">指定服务</yd-radio>
             <yd-radio val="3">邮寄</yd-radio>
           </yd-radio-group>
         </div>
@@ -52,10 +52,15 @@
       </template>
       <template v-if='formData.serviceType == 2'>
         <yd-cell-item arrow @click.native="getStore">
-          <span slot="left">{{checkedAddress == '' ? '请选择门店' : checkedAddress}}</span>
+          <span slot="left">{{checkedAddress == '' ? '请选择指定服务' : checkedAddress}}</span>
         </yd-cell-item>
       </template>
       <template v-if='formData.serviceType == 3'>
+        <yd-cell-item>
+          <div slot="left"> 
+            <div style="white-space: normal;">收方地址：福建省泉州市石狮市石狮总部大厦7楼，创手机（收）18150533737（仅支持顺丰到付）</div>
+          </div>
+        </yd-cell-item>
         <yd-cell-item>
           <span slot="left">锁屏密码：</span>
           <input v-model="formData.iphonePasswd" slot="right" type="text" placeholder="请输入锁屏密码">
@@ -155,12 +160,50 @@ export default {
         this.$store.dispatch('FETCH_SELECT_REPAIR');
         this.$store.dispatch("FETCH_POSITION");
       }
+
+      District.forEach((item)=>{
+          if(item.n == "福建省"){
+            var temp = {
+              v:item.v,
+              n:item.n,
+              c:[]
+            }
+
+            item.c.forEach((item2)=>{
+              if(item2.n == "泉州市"){
+                var temp2 = {
+                  v:item2.v,
+                  n:item2.n,
+                  c:[]
+                }
+                item2.c.forEach((item3)=>{
+                  if(item3.n == "晋江市" || item3.n == "石狮市" || item3.n == "南安市"){
+                    var temp3 = {
+                      v:item3.v,
+                      n:item3.n
+                    }
+                    temp2.c.push(temp3)
+                  }
+                })
+                temp.c.push(temp2)
+              }
+            })
+            this.district.push(temp);
+          }
+        })
     }else{
       goLogin.call(this, window.location.href);
     }
   },
   data() {
     let now = new Date();
+    if(now.getHours() > 22){
+      now.setDate(now.getDate() + 1);
+      now.setHours(9);
+    }
+    if(now.getHours() < 9){
+      now.setHours(9);
+    }
     let startDate = formateDate(now, "yyyy-MM-dd hh:mm");
     now.setDate(now.getDate() + 7);
     let endDate = formateDate(now, "yyyy-MM-dd hh:mm");
@@ -197,7 +240,7 @@ export default {
       checkedAddress: '',
 
       confirmShow: false,
-      district: District,
+      district: [],
 
       selects: [],
     }
@@ -350,6 +393,15 @@ export default {
         this.placeholder = "正在定位";
         getAddreessByPosition(latitude, longitude).then((res) => {
           if (this.$store.state.code["success"] == res.errorCode) {
+            if(this.provance != "福建省" || this.city != "泉州市"){
+              this.$dialog.alert({
+                mes:"抱歉，当前位置还没有上门服务"
+              })
+              this.formData.serviceType = 2;
+              this.cityModel = "";
+              this.placeholder = "请选择省市";
+              return;
+            }
             this.provance = res.data.province;
             this.city = res.data.city;
             this.cityModel = res.data.adress;

@@ -394,6 +394,10 @@ export default new Vuex.Store({
       }
       state.position.longitude = longitude;
       state.position.latitude = latitude;
+
+      if(_czc){
+        _czc.push(["_trackEvent",'地理位置','获取地理位置',state.wxOpenid,longitude+','+latitude,'']);
+      }
     },
     SET_STORE: (state, { data }) => {
       state.stores = data;

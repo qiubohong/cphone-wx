@@ -15,8 +15,19 @@ export default {
     }).catch((e)=>{
       console.log(e)
     });*/
+    this.$store.dispatch('FETCH_POSITION');
     this.$store.dispatch('FETCH_BRANDS');
-  }
+  },
+  watch: {
+   '$route'() {
+      if (_czc) {
+         var location = window.location
+         var content_url = location.pathname + location.hash
+         var referer_url = '/'
+         _czc.push(['_trackPageview', content_url, referer_url])
+      }
+   },
+ }
 }
 </script>
 
