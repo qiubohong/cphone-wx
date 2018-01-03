@@ -1,7 +1,7 @@
 <template>
   <div class="index">
     <yd-flexbox align='center' direction='vertical' style='margin-top:1rem'>
-      <yd-flexbox-item align='center'><img src="/static/img/product.jpg" alt=""></yd-flexbox-item>
+      <yd-flexbox-item align='center'><img src="/static/img/product.png" alt=""></yd-flexbox-item>
       <yd-flexbox-item align='center'>
         <h1 style="margin:.4rem 0;font-size:.6rem">创手机-回收维修</h1></yd-flexbox-item>
     </yd-flexbox>

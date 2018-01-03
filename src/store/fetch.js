@@ -28,6 +28,7 @@ export function fetch(opt) {
           try {
             resolve(JSON.parse(resData));
           } catch (error) {
+            console.error(error)
             reject(resData)
           }
         }
@@ -156,4 +157,8 @@ export function sendSignCode(number) {
 }
 export function isSign(openid){
   return fetch({ url: BASE + `user/customer/${openid}`})
+}
+
+export function getBanners(){
+  return fetch({url: '/static/banner.json'})
 }

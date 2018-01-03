@@ -22,7 +22,7 @@
           <div style="margin:.2rem .2rem .5rem .2rem">
             <h3 style="font-size:.4rem;margin-bottom:.5rem">{{repairSelect.name}}</h3>
             <yd-checkbox-group v-model="selectPrombles">
-                <yd-checkbox :val="index" v-for="(p,index) in problems">{{p.problemName}}</yd-checkbox>
+                <yd-checkbox style="padding-bottom:.2rem" :val="index" v-for="(p,index) in problems">{{p.problemName}}</yd-checkbox>
             </yd-checkbox-group>
           </div>
           <yd-button type="primary" size="large" @click.native="selectRepairType">下一步</yd-button>

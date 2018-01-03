@@ -6,11 +6,10 @@
         </router-link>
      </yd-navbar>
      <yd-slider autoplay="3000">
-        <yd-slider-item>
-            <img src="http://www.chuangshouji.com:8089/phone/1514203312740.1.jpg">
-        </yd-slider-item>
-        <yd-slider-item>
-            <img src="http://www.chuangshouji.com:8089/phone/1514203347268.2.jpg">
+        <yd-slider-item v-for="item in banners">
+          <a :href="item.link == '' ? 'javascript:void(0)' : item.link">
+            <img :src="item.src">
+          </a>
         </yd-slider-item>
     </yd-slider>
     <yd-grids-group :rows="4" item-height="2rem" style="border-top:1px solid #ececec">
@@ -27,7 +26,7 @@
             <img @click="goTel" slot="icon" style="height:1.2rem" src="/static/img/icon/a4.jpg">
         </yd-grids-item>
     </yd-grids-group>
-    <div class="index-title">
+    <!-- <div class="index-title">
     热门回收机型
     </div>
     <yd-list theme="3">
@@ -41,11 +40,19 @@
                <yd-button size="large" type="primary">立即回收</yd-button>
             </div>
         </yd-list-item>
-    </yd-list>
+    </yd-list> -->
+    <div style="margin:.2rem 0">
+      <template v-for="item in advs">
+        <a style="display:block;" :href="item.link == '' ? 'javascript:void(0)' : item.link">
+          <img style="display:block;width:100%" :src="item.src" alt="">
+        </a>
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
+import {getBanners} from '../store/fetch';
 
 export default {
   name: 'hello',
@@ -56,6 +63,8 @@ export default {
   },
   data () {
     return {
+      banners:[],
+      advs:[]
     }
   },
   watch:{
@@ -64,6 +73,10 @@ export default {
     this.$dialog.loading.open()
     this.$store.dispatch('FETCH_INDEX_HOT').then(()=>{
       this.$dialog.loading.close();
+    });
+    getBanners().then(data=>{
+      this.banners = data.banners;
+      this.advs = data.advs;
     })
   },
   methods:{

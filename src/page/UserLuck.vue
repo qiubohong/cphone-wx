@@ -24,7 +24,9 @@
         <div style="padding:1rem 0;">奖品正在筹备中，马上就开始了，尽请期待！</div>
       </template>
     </div>
-
+    <div style="padding:.5rem;background:#fff">
+      <img src="https://wx3.sinaimg.cn/mw690/006TNw25gy1fn2pnevwewj30fr0bztay.jpg" alt="" style="display:block;width:100%">
+    </div>
     <div style="font-size:.3rem;padding:.3rem .25rem;border-top:1px solid #ececec">我的兑换码</div>
     <div v-if="raffles.length == 0" style="background:#fff;padding:1rem 0;text-align:center;">
       还没有兑换码，赶快去 <yd-button @click.native="$router.push('/')">获取</yd-button>
@@ -88,7 +90,7 @@ export default {
       title: "开奖中心",
       ruleShow: false,
       interval: -1,
-      records: [],
+      records: []
     }
   },
   computed: {

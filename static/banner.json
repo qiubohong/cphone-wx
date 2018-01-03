@@ -1,0 +1,28 @@
+{
+  "banners": [
+  {
+    "link": "",
+    "src": "http://www.chuangshouji.com:8089/phone/1514203312740.1.jpg"
+  },
+  {
+    "link": "",
+    "src": "http://www.chuangshouji.com:8089/phone/1514203347268.2.jpg"
+  },
+  {
+    "link": "",
+    "src": "https://wx1.sinaimg.cn/mw690/006TNw25gy1fn2p6wm20jj30a9073js3.jpg"
+  }],
+  "advs":[
+  {
+    "link": "",
+    "src": "https://wx3.sinaimg.cn/mw690/006TNw25gy1fn2pzn9u2nj30nm0h2whl.jpg"
+  },
+  {
+    "link": "",
+    "src": "https://wx4.sinaimg.cn/mw690/006TNw25gy1fn2pzl74vkj30nm0d3n25.jpg"
+  },
+  {
+    "link": "",
+    "src": "https://wx4.sinaimg.cn/mw690/006TNw25gy1fn2pzmhc69j30jp0dzdjf.jpg"
+  }]
+}

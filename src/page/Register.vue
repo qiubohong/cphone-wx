@@ -1,7 +1,7 @@
 <template>
   <div class="index">
     <yd-flexbox align='center' direction='vertical' style='margin-top:1rem'>
-      <yd-flexbox-item align='center'><img src="/static/img/product.jpg" alt=""></yd-flexbox-item>
+      <yd-flexbox-item align='center'><img src="/static/img/product.png" alt=""></yd-flexbox-item>
       <yd-flexbox-item align='center'>
         <h1 style="margin:.4rem 0;font-size:.6rem">创手机-完善信息</h1></yd-flexbox-item>
     </yd-flexbox>
@@ -30,8 +30,7 @@
       </yd-cell-item>
       <yd-cell-item>
         <yd-icon slot="icon" name="phone3" size=".45rem"></yd-icon>
-        <input v-model="password" slot="right" type="number" placeholder="请输入登录密码">
-        </span>
+        <input v-model="password" type="password" slot="right" placeholder="请输入登录密码">
       </yd-cell-item>
     </yd-cell-group>
     <div style='margin:.2rem'>

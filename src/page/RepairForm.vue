@@ -138,7 +138,7 @@
         <yd-cell-item type="radio" style='padding-bottom:.2rem' v-for="(store,index) in stores">
           <span slot="left">
                 <h3>{{store.name}}</h3>
-                <p>门店地址：{{store.address}}</p>
+                <p>门店地址：{{store.address.replace(/:|\s/g,"")}}</p>
                 <p>联系电话：{{store.number}}</p>
               </span>
           <input slot="right" type="radio" :value="index" v-model="storeIndex" />
@@ -227,8 +227,8 @@ export default {
       },
       //城市控制器
       cityShow: false,
-      provance: "",
-      city: "",
+      provance: "福建省",
+      city: "泉州市",
       address: "",
       cityModel: '',
       placeholder:"请选择省市",
@@ -393,12 +393,9 @@ export default {
         this.placeholder = "正在定位";
         getAddreessByPosition(latitude, longitude).then((res) => {
           if (this.$store.state.code["success"] == res.errorCode) {
-            if(this.provance != "福建省" || this.city != "泉州市"){
-              this.$dialog.alert({
-                mes:"抱歉，当前位置还没有上门服务"
-              })
-              this.formData.serviceType = 2;
-              this.cityModel = "";
+            if(res.data.province != "福建省" || res.data.city != "泉州市"){
+              this.formData.serviceType = 1;
+              this.cityModel = "福建省泉州市晋江市";
               this.placeholder = "请选择省市";
               return;
             }
